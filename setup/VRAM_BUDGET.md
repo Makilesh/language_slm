@@ -70,6 +70,7 @@ operating points. The millisecond columns are what expose that — read them.
 | long edge | resized | grid | image tokens | seq len | fwd GiB | fwd ms | bwd GiB (no ckpt) | bwd ms | bwd GiB (ckpt) | bwd ms | ckpt active |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | 448px | 448x274 | 9x14 | **126** | 623 | 3.96 | 256 | 10.03 | 528 | 10.03 | 538 | yes |
+| 768px | 768x469 | 15x24 | **360** | 857 | 4.34 | 358 | **12.59** | 9933 | **12.59** | 23886 | yes |
 
 ## Machine-readable
 
@@ -126,6 +127,30 @@ operating points. The millisecond columns are what expose that — read them.
       "bwd_ckpt_alloc_gib": 10.028,
       "bwd_ckpt_rsvd_gib": 10.578,
       "bwd_ckpt_ms": 538,
+      "ckpt_active": true,
+      "notes": []
+    },
+    {
+      "long_edge": 768,
+      "resized": [
+        768,
+        469
+      ],
+      "grid": [
+        15,
+        24
+      ],
+      "image_tokens": 360,
+      "total_tokens": 857,
+      "fwd_alloc_gib": 4.341,
+      "fwd_rsvd_gib": 4.525,
+      "fwd_ms": 358,
+      "bwd_nockpt_alloc_gib": 12.589,
+      "bwd_nockpt_rsvd_gib": 12.98,
+      "bwd_nockpt_ms": 9933,
+      "bwd_ckpt_alloc_gib": 12.589,
+      "bwd_ckpt_rsvd_gib": 12.98,
+      "bwd_ckpt_ms": 23886,
       "ckpt_active": true,
       "notes": []
     }

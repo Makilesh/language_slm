@@ -1,0 +1,24 @@
+# Chart2Data-VLM — top-level dependencies.
+# Exact resolved versions are in requirements.lock.txt.
+#
+# torch/torchvision MUST come from the cu128 index. RTX 50-series is Blackwell
+# sm_120; the default PyPI wheels do not carry sm_120 kernels and will fail at
+# runtime with "no kernel image is available for execution on the device".
+#
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+#   pip install -r setup/requirements.txt
+
+transformers>=4.57
+accelerate
+bitsandbytes>=0.45
+peft
+trl
+qwen-vl-utils
+datasets
+matplotlib
+huggingface_hub[hf_xet]
+
+# NOT installed, deliberately:
+#   flash-attn  — no prebuilt wheel for sm_120 on Windows; a source build needs
+#                 MSVC + hours of nvcc and still commonly fails on Blackwell.
+#                 We use PyTorch SDPA instead. See ENVIRONMENT.md.

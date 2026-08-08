@@ -1,3 +1,5 @@
+# Phase 1 baselines - Qwen3-VL-4B-Instruct, no training
+
 Base-model numbers on the 150-chart synthetic eval set, before any training.
 Every number here was produced by `src/eval/run_eval.py`; nothing is estimated.
 
@@ -111,3 +113,70 @@ The brief asks for a frontier VLM as the ceiling reference. It is deliberately
 absent from this pass: it needs an external API, and it was descoped. Nothing
 in this file is a substitute for it, so the "how far from the ceiling" question
 stays open until it is run. Recorded here rather than left as a silent gap.
+
+
+| run | n | valid JSON | schema-exact | chart type | series names | structural | point recall | val@1% | val@5% | val@10% | median APE | res | constrained |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A. zero-shot, minimal | 150 | 94.7% | 94.7% | 72.7% | 51.4% | 14.0% | 71.6% | 9.6% | **24.7%** | 30.5% | 28% | 448px | no |
+| B. engineered prompt | 150 | 96.0% | 96.0% | 88.7% | 51.1% | 28.0% | 77.9% | 9.1% | **23.9%** | 30.4% | 30% | 448px | no |
+| C. engineered + constrained | 150 | 96.0% | 96.0% | 88.7% | 51.1% | 28.0% | 77.9% | 9.1% | **23.9%** | 30.4% | 30% | 448px | yes |
+
+## A. zero-shot, minimal — by chart type
+
+| chart type | n | val@5% | structural | point recall |
+|---|---|---|---|---|
+| bar | 43 | 32.4% | 23.3% | 69.0% |
+| line | 39 | 21.0% | 20.5% | 83.3% |
+| pie | 12 | 0.0% | 0.0% | 21.8% |
+| scatter | 19 | 29.2% | 10.5% | 69.5% |
+| stacked_bar | 37 | 19.9% | 2.7% | 79.7% |
+
+## A. zero-shot, minimal — by series count
+
+| series | n | val@5% | structural |
+|---|---|---|---|
+| 1 | 58 | 40.9% | 0.0% |
+| 2-3 | 79 | 26.2% | 25.3% |
+| 4-5 | 13 | 5.0% | 7.7% |
+
+## B. engineered prompt — by chart type
+
+| chart type | n | val@5% | structural | point recall |
+|---|---|---|---|---|
+| bar | 43 | 32.7% | 30.2% | 80.5% |
+| line | 39 | 20.7% | 33.3% | 86.7% |
+| pie | 12 | 0.0% | 0.0% | 21.8% |
+| scatter | 19 | 29.1% | 10.5% | 69.6% |
+| stacked_bar | 37 | 16.9% | 37.8% | 87.8% |
+
+## B. engineered prompt — by series count
+
+| series | n | val@5% | structural |
+|---|---|---|---|
+| 1 | 58 | 42.3% | 0.0% |
+| 2-3 | 79 | 24.5% | 46.8% |
+| 4-5 | 13 | 2.9% | 38.5% |
+
+## C. engineered + constrained — by chart type
+
+| chart type | n | val@5% | structural | point recall |
+|---|---|---|---|---|
+| bar | 43 | 32.7% | 30.2% | 80.5% |
+| line | 39 | 20.7% | 33.3% | 86.7% |
+| pie | 12 | 0.0% | 0.0% | 21.8% |
+| scatter | 19 | 29.1% | 10.5% | 69.6% |
+| stacked_bar | 37 | 16.9% | 37.8% | 87.8% |
+
+## C. engineered + constrained — by series count
+
+| series | n | val@5% | structural |
+|---|---|---|---|
+| 1 | 58 | 42.3% | 0.0% |
+| 2-3 | 79 | 24.5% | 46.8% |
+| 4-5 | 13 | 2.9% | 38.5% |
+
+## Run configs
+
+- **A. zero-shot, minimal** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `minimal` (v1.1), constrained=False, 448px, max_new_tokens=1024, median 17.9s/chart, mean 405 tokens
+- **B. engineered prompt** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `engineered` (v1.1), constrained=False, 448px, max_new_tokens=1024, median 15.6s/chart, mean 396 tokens
+- **C. engineered + constrained** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `engineered` (v1.1), constrained=True, 448px, max_new_tokens=1024, median 17.2s/chart, mean 396 tokens

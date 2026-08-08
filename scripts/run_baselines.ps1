@@ -17,6 +17,12 @@ $env:HF_HUB_OFFLINE = "1"
 $py = ".\.venv\Scripts\python.exe"
 $manifest = "data/eval/synth/synth.jsonl"
 
+# The committed baselines ran at the default 1024, which truncates 6/150 dense
+# charts and understates valid-JSON. 2048 covers all but the two degenerate
+# repetition loops (results/baselines.md). Raise this before Phase 3 -- it
+# changes every arm equally, so cross-arm comparisons stay valid.
+$maxNewTokens = 1024
+
 function Run-Arm {
     param([string]$Name, [string[]]$Extra)
     Write-Output ""
@@ -25,6 +31,7 @@ function Run-Arm {
         --manifest $manifest `
         --out "results/preds/$Name.jsonl" `
         --report "results/scores/$Name.json" `
+        --max-new-tokens $maxNewTokens `
         --resume @Extra
     if ($LASTEXITCODE -ne 0) { throw "$Name failed with exit $LASTEXITCODE" }
 }

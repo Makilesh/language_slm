@@ -67,10 +67,17 @@ def load(model_id: str, dtype: str, adapter: str | None, attn: str = "sdpa"):
     return model, processor
 
 
-def build_grammar_processor(processor, model):
-    """XGrammar logits processor that makes malformed JSON structurally impossible."""
+def compile_grammar(processor, model):
+    """Compile the ChartData JSON schema into an XGrammar grammar.
+
+    Returns the *compiled grammar*, not a logits processor. xgrammar's
+    `LogitsProcessor` carries per-sequence matcher state and is explicitly
+    single-use ("For each generate() call, instantiate a new one") -- it has no
+    reset. Compilation is the expensive step and is safe to cache; building a
+    processor around an already-compiled grammar is cheap, so the split here is
+    what makes per-sample construction affordable.
+    """
     import xgrammar as xgr
-    from xgrammar.contrib.hf import LogitsProcessor
 
     # vocab_size must be the model's logits width, not len(tokenizer): Qwen pads
     # the embedding table past the tokenizer's vocabulary, and a mismatch here
@@ -78,8 +85,31 @@ def build_grammar_processor(processor, model):
     vocab_size = model.config.get_text_config().vocab_size
     info = xgr.TokenizerInfo.from_huggingface(processor.tokenizer, vocab_size=vocab_size)
     compiler = xgr.GrammarCompiler(info)
-    grammar = compiler.compile_json_schema(ChartData)
-    return LogitsProcessor(grammar)
+    return compiler.compile_json_schema(ChartData)
+
+
+def make_grammar_processor(compiled_grammar):
+    """Fresh single-use logits processor for one generate() call.
+
+    xgrammar applies its token bitmask with a Triton kernel whenever `scores`
+    is on CUDA, and Triton has no Windows build -- the stock processor raises
+    `ImportError: Triton is not installed` on every token. Its own code already
+    has a CPU branch, so handing it CPU scores and moving the result back takes
+    that branch instead.
+
+    Cost is one vocab-wide round trip per generated token (151,936 floats,
+    ~0.6 MB), which is noise next to a 4B forward pass. Correctness is
+    unaffected: the mask is identical, only where it is applied changes.
+    """
+    from xgrammar.contrib.hf import LogitsProcessor
+
+    class CpuBitmaskLogitsProcessor(LogitsProcessor):
+        def __call__(self, input_ids, scores):
+            device = scores.device
+            masked = super().__call__(input_ids, scores.to("cpu"))
+            return masked.to(device)
+
+    return CpuBitmaskLogitsProcessor(compiled_grammar)
 
 
 # --------------------------------------------------------------------------- #
@@ -94,7 +124,7 @@ def resize_long_edge(image: Image.Image, long_edge: int) -> Image.Image:
 
 
 @torch.no_grad()
-def generate_one(model, processor, image, prompt_style, max_new_tokens, grammar_proc):
+def generate_one(model, processor, image, prompt_style, max_new_tokens, compiled_grammar):
     messages = build_messages(prompt_style)
     text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     inputs = processor(text=[text], images=[image], return_tensors="pt").to("cuda")
@@ -106,11 +136,9 @@ def generate_one(model, processor, image, prompt_style, max_new_tokens, grammar_
         "top_p": None,
         "top_k": None,
     }
-    if grammar_proc is not None:
-        # The processor carries per-sequence state and must not be reused
-        # across generate() calls.
-        grammar_proc.reset()
-        kwargs["logits_processor"] = [grammar_proc]
+    if compiled_grammar is not None:
+        # Single-use by design: a new processor for every generate() call.
+        kwargs["logits_processor"] = [make_grammar_processor(compiled_grammar)]
 
     out = model.generate(**inputs, **kwargs)
     generated = out[0][inputs["input_ids"].shape[1]:]
@@ -122,16 +150,34 @@ def generate_one(model, processor, image, prompt_style, max_new_tokens, grammar_
 # --------------------------------------------------------------------------- #
 
 
-def load_done(path: Path) -> dict[str, dict]:
+def load_predictions(path: Path, drop_errors: bool = False) -> dict[str, dict]:
+    """Predictions keyed by sample id; later rows win over earlier ones.
+
+    The file is append-only, so a retried sample appears twice and the newer
+    row must be the one that survives.
+
+    `drop_errors` distinguishes the two callers, which want opposite things:
+
+    * **resume** (True) — a row that recorded a `gen_error` is work still owed,
+      not work done. Counting it as done freezes a transient fault, or a bug
+      like the single-use grammar processor, permanently into the results.
+    * **scoring** (False) — a generation failure is a real failure and has to
+      stay in the denominator. Dropping it would quietly shrink n and turn a
+      150/150 wipeout into a clean-looking n=0.
+    """
     if not path.exists():
         return {}
-    done = {}
+    out: dict[str, dict] = {}
     for line in path.open(encoding="utf-8"):
         line = line.strip()
-        if line:
-            row = json.loads(line)
-            done[row["id"]] = row
-    return done
+        if not line:
+            continue
+        row = json.loads(line)
+        if drop_errors and row.get("gen_error"):
+            out.pop(row["id"], None)
+            continue
+        out[row["id"]] = row
+    return out
 
 
 def run(args) -> None:
@@ -141,12 +187,12 @@ def run(args) -> None:
         rows = rows[: args.limit]
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    done = load_done(args.out) if args.resume else {}
+    done = load_predictions(args.out, drop_errors=True) if args.resume else {}
     if done:
         print(f"resuming: {len(done)} predictions already present")
 
     model, processor = load(args.model, args.dtype, args.adapter, args.attn)
-    grammar_proc = build_grammar_processor(processor, model) if args.constrained else None
+    compiled_grammar = compile_grammar(processor, model) if args.constrained else None
 
     print(f"model={args.model} dtype={args.dtype} adapter={args.adapter}")
     print(f"prompt={args.prompt} (v{PROMPT_VERSION}) constrained={args.constrained} "
@@ -166,7 +212,7 @@ def run(args) -> None:
             t0 = time.time()
             try:
                 text, n_tokens = generate_one(
-                    model, processor, image, args.prompt, args.max_new_tokens, grammar_proc
+                    model, processor, image, args.prompt, args.max_new_tokens, compiled_grammar
                 )
                 error = None
             except Exception as exc:  # noqa: BLE001 - a generation failure is a result
@@ -199,7 +245,7 @@ def score(manifest: Path, preds_path: Path, report: Path | None, config: dict) -
     gold_by_id = {
         r["id"]: r for r in (json.loads(x) for x in manifest.open(encoding="utf-8") if x.strip())
     }
-    preds = load_done(preds_path)
+    preds = load_predictions(preds_path)
 
     samples = []
     for sid, row in preds.items():

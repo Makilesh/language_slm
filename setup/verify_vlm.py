@@ -210,8 +210,14 @@ def env_report() -> dict:
 # --------------------------------------------------------------------------- #
 
 
-def load_model(attn_impl: str, quantize_vision: bool):
+def load_model(attn_impl: str, quantize_vision: bool, repeat_kv: bool = True):
     from transformers import AutoProcessor, BitsAndBytesConfig, Qwen3VLForConditionalGeneration
+
+    from setup.sdpa_compat import force_repeat_kv
+
+    # Without this, SDPA drops to the math backend on Windows and backward costs
+    # ~4 GiB more and runs ~12x slower. See setup/sdpa_compat.py for the data.
+    force_repeat_kv(repeat_kv)
 
     # The frozen ViT is only ~0.44B params; leaving it in bf16 costs well under
     # a gigabyte and avoids pushing NF4 error through visual features we never
@@ -492,7 +498,11 @@ def run(args) -> None:
     print(f"LOADING {MODEL_ID} in 4-bit NF4 (attn={args.attn})")
     print("=" * 78)
     cuda_reset()
-    model, processor = load_model(args.attn, args.quantize_vision)
+    model, processor = load_model(args.attn, args.quantize_vision, not args.no_repeat_kv)
+    from setup.sdpa_compat import sdpa_backend_flags
+
+    print(f"  sdp backends           {sdpa_backend_flags()}")
+    print(f"  force repeat_kv        {not args.no_repeat_kv}")
     torch.cuda.synchronize()
     _, weights_reserved = peak_gib()
     print(f"  weights resident       {weights_reserved:.2f} GiB reserved")
@@ -651,6 +661,7 @@ def write_report(out, env, results, breakdown, weights_reserved, after_lora, cen
         "| batch size | 1 |",
         f"| px per image token | {args.px_per_token} |",
         f"| prepare_model_for_kbit_training | {args.use_prepare} |",
+        f"| force GQA repeat_kv | {not args.no_repeat_kv} |",
         "",
         "### Parameter memory by dtype",
         "",
@@ -771,6 +782,12 @@ def main() -> None:
         "--quantize-vision",
         action="store_true",
         help="also NF4-quantize the frozen vision tower (default: keep it bf16)",
+    )
+    parser.add_argument(
+        "--no-repeat-kv",
+        action="store_true",
+        help="disable the GQA repeat_kv patch and let SDPA fall back to the math "
+        "backend (much slower on Windows; see setup/sdpa_compat.py)",
     )
     parser.add_argument(
         "--use-prepare",

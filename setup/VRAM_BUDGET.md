@@ -7,7 +7,7 @@ device after the operation actually ran; nothing is estimated.
 
 | key | value |
 |---|---|
-| timestamp | 2026-08-07T20:23:52+00:00 |
+| timestamp | 2026-08-08T04:45:24+00:00 |
 | platform | Windows 11 |
 | python | 3.12.10 |
 | torch | 2.11.0+cu128 |
@@ -32,6 +32,7 @@ device after the operation actually ran; nothing is estimated.
 | batch size | 1 |
 | px per image token | 32 |
 | prepare_model_for_kbit_training | False |
+| force GQA repeat_kv | True |
 
 ### Parameter memory by dtype
 
@@ -68,15 +69,14 @@ operating points. The millisecond columns are what expose that — read them.
 
 | long edge | resized | grid | image tokens | seq len | fwd GiB | fwd ms | bwd GiB (no ckpt) | bwd ms | bwd GiB (ckpt) | bwd ms | ckpt active |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| 448px | 448x274 | 9x14 | **126** | 623 | 3.96 | 401 | **12.04** | 13282 | **12.06** | 1094 | yes |
-| 768px | 768x469 | 15x24 | **360** | 857 | 4.34 | 519 | **16.26** | 15397 | **16.26** | 15053 | yes |
+| 448px | 448x274 | 9x14 | **126** | 623 | 3.96 | 256 | 10.03 | 528 | 10.03 | 538 | yes |
 
 ## Machine-readable
 
 ```json
 {
   "env": {
-    "timestamp": "2026-08-07T20:23:52+00:00",
+    "timestamp": "2026-08-08T04:45:24+00:00",
     "platform": "Windows 11",
     "python": "3.12.10",
     "torch": "2.11.0+cu128",
@@ -117,39 +117,15 @@ operating points. The millisecond columns are what expose that — read them.
       ],
       "image_tokens": 126,
       "total_tokens": 623,
-      "fwd_alloc_gib": 3.959,
-      "fwd_rsvd_gib": 4.148,
-      "fwd_ms": 401,
-      "bwd_nockpt_alloc_gib": 12.039,
-      "bwd_nockpt_rsvd_gib": 12.26,
-      "bwd_nockpt_ms": 13282,
-      "bwd_ckpt_alloc_gib": 12.061,
-      "bwd_ckpt_rsvd_gib": 12.613,
-      "bwd_ckpt_ms": 1094,
-      "ckpt_active": true,
-      "notes": []
-    },
-    {
-      "long_edge": 768,
-      "resized": [
-        768,
-        469
-      ],
-      "grid": [
-        15,
-        24
-      ],
-      "image_tokens": 360,
-      "total_tokens": 857,
-      "fwd_alloc_gib": 4.343,
-      "fwd_rsvd_gib": 4.713,
-      "fwd_ms": 519,
-      "bwd_nockpt_alloc_gib": 16.26,
-      "bwd_nockpt_rsvd_gib": 16.754,
-      "bwd_nockpt_ms": 15397,
-      "bwd_ckpt_alloc_gib": 16.26,
-      "bwd_ckpt_rsvd_gib": 16.754,
-      "bwd_ckpt_ms": 15053,
+      "fwd_alloc_gib": 3.962,
+      "fwd_rsvd_gib": 4.09,
+      "fwd_ms": 256,
+      "bwd_nockpt_alloc_gib": 10.028,
+      "bwd_nockpt_rsvd_gib": 10.578,
+      "bwd_nockpt_ms": 528,
+      "bwd_ckpt_alloc_gib": 10.028,
+      "bwd_ckpt_rsvd_gib": 10.578,
+      "bwd_ckpt_ms": 538,
       "ckpt_active": true,
       "notes": []
     }

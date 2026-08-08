@@ -1,0 +1,48 @@
+{
+  "model": "Qwen/Qwen3-VL-4B-Instruct",
+  "long_edge": 768,
+  "seq_len": 857,
+  "image_tokens": 360,
+  "vocab_size": 151936,
+  "resident_gib": 2.972,
+  "card_gib": 11.94,
+  "rows": [
+    {
+      "name": "backward, full loss (baseline)",
+      "peak_gib": 16.252,
+      "ms": 23798
+    },
+    {
+      "name": "A. backward, loss on last token only",
+      "peak_gib": 15.056,
+      "ms": 32638
+    },
+    {
+      "name": "A. forward only, no labels",
+      "peak_gib": 3.415,
+      "ms": 6272
+    },
+    {
+      "name": "B. backward, math backend disabled",
+      "peak_gib": null,
+      "ms": null,
+      "error": "RuntimeError"
+    },
+    {
+      "name": "B. backward, math backend forced",
+      "peak_gib": null,
+      "ms": null,
+      "error": "OutOfMemoryError"
+    },
+    {
+      "name": "C. backward, checkpointing OFF",
+      "peak_gib": 16.265,
+      "ms": 18025
+    },
+    {
+      "name": "C. backward, checkpointing ON",
+      "peak_gib": 16.265,
+      "ms": 21622
+    }
+  ]
+}

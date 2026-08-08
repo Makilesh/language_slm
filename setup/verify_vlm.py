@@ -26,6 +26,7 @@ import gc
 import json
 import platform
 import sys
+import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -95,6 +96,75 @@ def peak_gib() -> tuple[float, float]:
     )
 
 
+# Torch raises at least three different things for an allocation failure. The
+# clean `OutOfMemoryError` only appears when the caching allocator itself
+# refuses; once Windows WDDM has already spilled into host memory the failure
+# surfaces from the driver as AcceleratorError instead, which is what killed the
+# first Phase 0 run.
+OOM_ERRORS = tuple(
+    e
+    for e in (
+        getattr(torch, "OutOfMemoryError", None),
+        getattr(torch, "AcceleratorError", None),
+        torch.cuda.OutOfMemoryError,
+        RuntimeError,
+    )
+    if e is not None
+)
+
+
+def oom_reason(exc: BaseException) -> str:
+    text = str(exc).lower()
+    if "out of memory" in text or "outofmemory" in text:
+        return "OOM"
+    return f"FAILED: {type(exc).__name__}"
+
+
+def recover(model) -> bool:
+    """Try to make the CUDA context usable again after an allocation failure.
+
+    A driver-level `AcceleratorError` poisons the context badly enough that
+    even `empty_cache()` raises, so every step here is individually guarded --
+    an unguarded cleanup call turns a recorded OOM into a crashed run, which is
+    exactly what it did on the first attempt. Returns whether the device still
+    works.
+    """
+    for step in (
+        lambda: model.zero_grad(set_to_none=True),
+        gc.collect,
+        torch.cuda.empty_cache,
+        torch.cuda.reset_peak_memory_stats,
+    ):
+        try:
+            step()
+        except Exception:  # noqa: BLE001 - already in a failure path
+            pass
+    try:
+        torch.zeros(8, device="cuda").sum().item()
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
+def spill_flag(peak: float | None) -> str:
+    """Mark measurements that exceeded physical VRAM.
+
+    Anything above the card's real capacity is being served from host memory
+    over PCIe. It did not OOM, but it is not a usable operating point either.
+    """
+    if peak is None:
+        return ""
+    total = torch.cuda.get_device_properties(0).total_memory / GIB
+    return "  <-- EXCEEDS VRAM (host spill)" if peak > total else ""
+
+
+def fmt_pass(label: str, s: "PassStats", extra: str = "") -> str:
+    return (
+        f"  {label:22s} alloc {s.allocated:6.2f} / rsvd {s.reserved:6.2f} GiB"
+        f"  {s.seconds * 1000:8.0f} ms{spill_flag(s.allocated)}{extra}"
+    )
+
+
 @dataclass
 class ResolutionResult:
     long_edge: int
@@ -103,9 +173,10 @@ class ResolutionResult:
     image_tokens: int = 0
     prompt_tokens: int = 0
     total_tokens: int = 0
-    fwd_peak: float | None = None
-    bwd_peak_nockpt: float | None = None
-    bwd_peak_ckpt: float | None = None
+    fwd: "PassStats | None" = None
+    bwd_nockpt: "PassStats | None" = None
+    bwd_ckpt: "PassStats | None" = None
+    ckpt_active: bool | None = None
     notes: list[str] = field(default_factory=list)
 
 
@@ -167,16 +238,51 @@ def load_model(attn_impl: str, quantize_vision: bool):
     return model, processor
 
 
-def attach_lora(model, rank: int, alpha: int):
+def dtype_census(model) -> dict[str, float]:
+    """GiB of parameter memory per dtype.
+
+    `prepare_model_for_kbit_training` silently upcasts every non-quantized
+    module -- embeddings, lm_head, and the entire vision tower -- to fp32. On a
+    4B VLM that is several gigabytes and it also drags the compute path out of
+    bf16. This census is how we catch it instead of trusting the recipe.
+    """
+    out: dict[str, float] = {}
+    for _, p in model.named_parameters():
+        key = str(p.dtype).replace("torch.", "")
+        out[key] = out.get(key, 0.0) + p.numel() * p.element_size() / GIB
+    return dict(sorted(out.items(), key=lambda kv: -kv[1]))
+
+
+def attach_lora(model, rank: int, alpha: int, use_prepare: bool):
     """LoRA on the LLM decoder linear layers only.
 
     Anchored on `language_model` so the pattern cannot accidentally reach into
     the vision tower or the merger -- this is standing rule 2, enforced in code
     rather than trusted to naming conventions.
-    """
-    from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 
-    model = prepare_model_for_kbit_training(model, use_gradient_checkpointing=True)
+    `use_prepare` selects between peft's `prepare_model_for_kbit_training` and
+    doing by hand only the two things we actually need from it (freeze the base,
+    let gradients flow back through the frozen embedding into checkpointed
+    blocks). The stock helper's fp32 upcast is measured in Phase 0 rather than
+    assumed harmless -- see results/phase0_fp32_upcast.md.
+    """
+    from peft import LoraConfig, get_peft_model
+
+    if use_prepare:
+        from peft import prepare_model_for_kbit_training
+
+        model = prepare_model_for_kbit_training(
+            model,
+            use_gradient_checkpointing=True,
+            gradient_checkpointing_kwargs={"use_reentrant": False},
+        )
+    else:
+        for p in model.parameters():
+            p.requires_grad_(False)
+        # Gradient checkpointing recomputes each block from its inputs, so the
+        # block input must carry grad_fn. With a frozen embedding it does not,
+        # and every checkpointed segment silently detaches.
+        model.enable_input_require_grads()
 
     cfg = LoraConfig(
         r=rank,
@@ -189,6 +295,16 @@ def attach_lora(model, rank: int, alpha: int):
         ),
     )
     return get_peft_model(model, cfg)
+
+
+def checkpointing_active(model) -> bool:
+    """Whether any submodule actually has gradient checkpointing switched on.
+
+    Calling `gradient_checkpointing_enable()` on a PEFT wrapper does not always
+    reach the inner decoder, and the failure is silent -- memory just never
+    drops. Read the flag back rather than trusting the call.
+    """
+    return any(getattr(m, "gradient_checkpointing", False) for m in model.modules())
 
 
 def trainable_breakdown(model) -> dict:
@@ -270,34 +386,82 @@ def build_batch(processor, image: Image.Image, device: str = "cuda"):
 # --------------------------------------------------------------------------- #
 
 
-def measure_forward(model, inputs) -> tuple[float, float]:
-    cuda_reset()
-    with torch.no_grad():
-        out = model(**inputs)
-    loss = float(out.loss)
+@dataclass
+class PassStats:
+    """One measured pass.
+
+    `allocated` is the real requirement -- the high-water mark of live tensors.
+    `reserved` is what the caching allocator held from the driver; it is sticky
+    across measurements and inflated by fragmentation, so it consistently
+    overstates need. Report both, size the budget on allocated, and use
+    `seconds` to catch host spill, which neither memory number reveals on
+    Windows.
+    """
+
+    allocated: float
+    reserved: float
+    seconds: float
+
+
+def timed(fn, max_iters: int = 3, slow_threshold: float = 3.0) -> PassStats:
+    # One untimed warmup: the first call pays cuDNN/cuBLAS autotuning and
+    # allocator growth that would otherwise land in the median.
+    t0 = time.perf_counter()
+    fn()
     torch.cuda.synchronize()
-    _, reserved = peak_gib()
-    del out
-    return reserved, loss
+    warmup_secs = time.perf_counter() - t0
+
+    # A pass that is already spilling to host memory takes tens of seconds.
+    # Repeating it three times buys precision nobody needs on a number whose
+    # only job is to say "this does not fit".
+    iters = 1 if warmup_secs > slow_threshold else max_iters
+
+    cuda_reset()
+    times = []
+    for _ in range(iters):
+        torch.cuda.synchronize()
+        t0 = time.perf_counter()
+        fn()
+        torch.cuda.synchronize()
+        times.append(time.perf_counter() - t0)
+
+    allocated, reserved = peak_gib()
+    times.sort()
+    return PassStats(allocated, reserved, times[len(times) // 2])
 
 
-def measure_backward(model, inputs, grad_checkpointing: bool) -> float:
+def measure_forward(model, inputs) -> tuple[PassStats, float]:
+    holder = {}
+
+    def once():
+        with torch.no_grad():
+            out = model(**inputs)
+        holder["loss"] = float(out.loss)
+        del out
+
+    stats = timed(once)
+    return stats, holder["loss"]
+
+
+def measure_backward(model, inputs, grad_checkpointing: bool) -> tuple[PassStats, bool]:
     if grad_checkpointing:
-        model.gradient_checkpointing_enable()
+        model.gradient_checkpointing_enable(gradient_checkpointing_kwargs={"use_reentrant": False})
         model.enable_input_require_grads()
     else:
         model.gradient_checkpointing_disable()
 
-    cuda_reset()
-    out = model(**inputs)
-    out.loss.backward()
-    torch.cuda.synchronize()
-    _, reserved = peak_gib()
+    active = checkpointing_active(model)
 
+    def once():
+        out = model(**inputs)
+        out.loss.backward()
+        model.zero_grad(set_to_none=True)
+        del out
+
+    stats = timed(once)
     model.zero_grad(set_to_none=True)
-    del out
     cuda_reset()
-    return reserved
+    return stats, active
 
 
 # --------------------------------------------------------------------------- #
@@ -333,7 +497,11 @@ def run(args) -> None:
     _, weights_reserved = peak_gib()
     print(f"  weights resident       {weights_reserved:.2f} GiB reserved")
 
-    model = attach_lora(model, args.lora_r, args.lora_alpha)
+    model = attach_lora(model, args.lora_r, args.lora_alpha, args.use_prepare)
+    census = dtype_census(model)
+    print(f"  prepare_for_kbit       {args.use_prepare}")
+    print("  param memory by dtype  " + ", ".join(f"{k} {v:.2f} GiB" for k, v in census.items()))
+
     breakdown = trainable_breakdown(model)
     print(
         f"  trainable params       {breakdown['trainable_total']:,} / "
@@ -348,6 +516,9 @@ def run(args) -> None:
 
     torch.cuda.synchronize()
     _, after_lora = peak_gib()
+    free, total = torch.cuda.mem_get_info()
+    print(f"  resident after LoRA    {after_lora:.2f} GiB reserved  "
+          f"({(total - free) / GIB:.2f} GiB used on device, {free / GIB:.2f} GiB free)")
 
     results: list[ResolutionResult] = []
     merge_px = processor.image_processor.patch_size * processor.image_processor.merge_size
@@ -388,46 +559,69 @@ def run(args) -> None:
         print(f"  image share of seq     "
               f"{100 * res.image_tokens / max(1, res.total_tokens):.1f}%")
 
-        for label, fn in (
-            ("forward", lambda: measure_forward(model, inputs)),
-            ("backward (no ckpt)", lambda: measure_backward(model, inputs, False)),
-            ("backward (ckpt)", lambda: measure_backward(model, inputs, True)),
-        ):
+        try:
+            stats, loss = measure_forward(model, inputs)
+            res.fwd = stats
+            print(fmt_pass("forward", stats, f"  loss {loss:.4f}"))
+        except OOM_ERRORS as exc:
+            res.notes.append(f"forward: {oom_reason(exc)}")
+            print(f"  {'forward':22s} {oom_reason(exc)}")
+            recover(model)
+
+        for label, ckpt in (("backward (no ckpt)", False), ("backward (ckpt)", True)):
             try:
-                out = fn()
-                peak, loss = out if isinstance(out, tuple) else (out, None)
-                if label == "forward":
-                    res.fwd_peak = peak
-                    print(f"  {label:22s} peak {peak:6.2f} GiB   loss {loss:.4f}")
+                stats, active = measure_backward(model, inputs, ckpt)
+                if ckpt:
+                    res.bwd_ckpt = stats
+                    res.ckpt_active = active
+                    if not active:
+                        res.notes.append(
+                            "gradient checkpointing requested but not active on any module"
+                        )
                 else:
-                    if "no ckpt" in label:
-                        res.bwd_peak_nockpt = peak
-                    else:
-                        res.bwd_peak_ckpt = peak
-                    print(f"  {label:22s} peak {peak:6.2f} GiB")
-            except torch.OutOfMemoryError as exc:
-                res.notes.append(f"{label}: OOM")
-                print(f"  {label:22s} OOM")
-                model.zero_grad(set_to_none=True)
-                cuda_reset()
-                del exc
+                    res.bwd_nockpt = stats
+                flag = "" if not ckpt else ("" if active else "  <-- CKPT NOT ACTIVE")
+                print(fmt_pass(label, stats, flag))
+            except OOM_ERRORS as exc:
+                reason = oom_reason(exc)
+                res.notes.append(f"{label}: {reason}")
+                print(f"  {label:22s} {reason}")
+                if not recover(model):
+                    res.notes.append("CUDA context unusable after OOM; aborting run")
+                    print("  CUDA context unusable after OOM -- aborting remaining passes")
+                    results.append(res)
+                    write_report(args.out, env, results, breakdown,
+                                 weights_reserved, after_lora, census, args)
+                    print(f"\nwrote {args.out} (partial)")
+                    return
 
         del inputs
         cuda_reset()
         results.append(res)
+        # Written after every resolution so a hard CUDA abort still leaves the
+        # rows we already paid for on disk.
+        write_report(args.out, env, results, breakdown, weights_reserved,
+                     after_lora, census, args)
 
-    write_report(args.out, env, results, breakdown, weights_reserved, after_lora, args)
     print("\n" + "=" * 78)
     print(f"wrote {args.out}")
     print("=" * 78)
 
 
-def write_report(out, env, results, breakdown, weights_reserved, after_lora, args) -> None:
+def write_report(out, env, results, breakdown, weights_reserved, after_lora, census, args) -> None:
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
+    vram_total = torch.cuda.get_device_properties(0).total_memory / GIB
 
-    def cell(v: float | None) -> str:
-        return "OOM" if v is None else f"{v:.2f}"
+    def gib(s: "PassStats | None") -> str:
+        if s is None:
+            return "OOM"
+        # Bold-flag anything the card cannot actually hold: it ran, but only by
+        # spilling to host memory over PCIe.
+        return f"**{s.allocated:.2f}**" if s.allocated > vram_total else f"{s.allocated:.2f}"
+
+    def ms(s: "PassStats | None") -> str:
+        return "—" if s is None else f"{s.seconds * 1000:.0f}"
 
     lines = [
         "# VRAM budget — Phase 0 measurements",
@@ -456,6 +650,16 @@ def write_report(out, env, results, breakdown, weights_reserved, after_lora, arg
         "| LoRA targets | LLM decoder q/k/v/o/gate/up/down only |",
         "| batch size | 1 |",
         f"| px per image token | {args.px_per_token} |",
+        f"| prepare_model_for_kbit_training | {args.use_prepare} |",
+        "",
+        "### Parameter memory by dtype",
+        "",
+        "| dtype | GiB |",
+        "|---|---|",
+        *[f"| {k} | {v:.2f} |" for k, v in census.items()],
+        "",
+        "`uint8` is NF4-packed weight storage (two 4-bit params per byte), so",
+        "parameter *counts* below read low against the model's nominal 4B.",
         "",
         "## Trainable parameters",
         "",
@@ -473,16 +677,26 @@ def write_report(out, env, results, breakdown, weights_reserved, after_lora, arg
         "",
         "## THE TABLE — resolution vs image tokens vs peak VRAM",
         "",
-        "| long edge | resized | token grid | image tokens | full seq len | "
-        "fwd peak (GiB) | bwd peak, no ckpt (GiB) | bwd peak, ckpt (GiB) |",
-        "|---|---|---|---|---|---|---|---|",
+        f"Card capacity is **{vram_total:.2f} GiB**. GiB columns are peak *allocated*",
+        "(live tensors), not reserved — the caching allocator's reserved pool is sticky",
+        "across measurements and overstates the requirement. Values in **bold** exceed",
+        "card capacity: on Windows the WDDM driver serves the overflow from host RAM",
+        "over PCIe instead of raising OOM, so those rows *ran* but are not usable",
+        "operating points. The millisecond columns are what expose that — read them.",
+        "",
+        "| long edge | resized | grid | image tokens | seq len | "
+        "fwd GiB | fwd ms | bwd GiB (no ckpt) | bwd ms | bwd GiB (ckpt) | bwd ms | ckpt active |",
+        "|---|---|---|---|---|---|---|---|---|---|---|---|",
     ]
 
     for r in results:
         lines.append(
             f"| {r.long_edge}px | {r.resized[0]}x{r.resized[1]} | "
             f"{r.grid[0]}x{r.grid[1]} | **{r.image_tokens}** | {r.total_tokens} | "
-            f"{cell(r.fwd_peak)} | {cell(r.bwd_peak_nockpt)} | {cell(r.bwd_peak_ckpt)} |"
+            f"{gib(r.fwd)} | {ms(r.fwd)} | "
+            f"{gib(r.bwd_nockpt)} | {ms(r.bwd_nockpt)} | "
+            f"{gib(r.bwd_ckpt)} | {ms(r.bwd_ckpt)} | "
+            f"{'—' if r.ckpt_active is None else ('yes' if r.ckpt_active else 'NO')} |"
         )
 
     notes = [(r.long_edge, n) for r in results for n in r.notes]
@@ -502,11 +716,14 @@ def write_report(out, env, results, breakdown, weights_reserved, after_lora, arg
                     "model": MODEL_ID,
                     "attn": args.attn,
                     "quantize_vision": args.quantize_vision,
+                    "prepare_for_kbit": args.use_prepare,
                     "lora_r": args.lora_r,
                     "lora_alpha": args.lora_alpha,
                     "px_per_image_token": args.px_per_token,
                 },
+                "vram_total_gib": round(vram_total, 3),
                 "weights_reserved_gib": round(weights_reserved, 3),
+                "param_gib_by_dtype": {k: round(v, 3) for k, v in census.items()},
                 "rows": [
                     {
                         "long_edge": r.long_edge,
@@ -514,9 +731,20 @@ def write_report(out, env, results, breakdown, weights_reserved, after_lora, arg
                         "grid": list(r.grid),
                         "image_tokens": r.image_tokens,
                         "total_tokens": r.total_tokens,
-                        "fwd_peak_gib": r.fwd_peak,
-                        "bwd_peak_nockpt_gib": r.bwd_peak_nockpt,
-                        "bwd_peak_ckpt_gib": r.bwd_peak_ckpt,
+                        **{
+                            f"{name}_{stat}": val
+                            for name, s in (
+                                ("fwd", r.fwd),
+                                ("bwd_nockpt", r.bwd_nockpt),
+                                ("bwd_ckpt", r.bwd_ckpt),
+                            )
+                            for stat, val in (
+                                ("alloc_gib", None if s is None else round(s.allocated, 3)),
+                                ("rsvd_gib", None if s is None else round(s.reserved, 3)),
+                                ("ms", None if s is None else round(s.seconds * 1000)),
+                            )
+                        },
+                        "ckpt_active": r.ckpt_active,
                         "notes": r.notes,
                     }
                     for r in results
@@ -543,6 +771,12 @@ def main() -> None:
         "--quantize-vision",
         action="store_true",
         help="also NF4-quantize the frozen vision tower (default: keep it bf16)",
+    )
+    parser.add_argument(
+        "--use-prepare",
+        action="store_true",
+        help="use peft.prepare_model_for_kbit_training, which upcasts non-quantized "
+        "modules to fp32 (default: off; freeze + enable_input_require_grads by hand)",
     )
     args = parser.parse_args()
     args.px_per_token = 32  # patch_size 16 * spatial_merge_size 2

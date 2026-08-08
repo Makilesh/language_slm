@@ -1,0 +1,54 @@
+W0808 01:49:08.218000 41040 .venv\Lib\site-packages\torch\utils\flop_counter.py:29] triton not found; flop counting will not work for triton kernels
+==============================================================================
+ENVIRONMENT
+==============================================================================
+  timestamp              2026-08-07T20:19:23+00:00
+  platform               Windows 11
+  python                 3.12.10
+  torch                  2.11.0+cu128
+  transformers           5.14.1
+  bitsandbytes           0.50.0
+  gpu                    NVIDIA GeForce RTX 5070 Ti Laptop GPU
+  vram_total_gib         11.94
+  compute_capability     sm_120
+  torch_arch_list        sm_75,sm_80,sm_86,sm_90,sm_100,sm_120
+  bf16_supported         True
+
+  probe image            D:\GEN AI\language_slm\assets\demo\probe_chart.png  1800x1100
+
+==============================================================================
+LOADING Qwen/Qwen3-VL-4B-Instruct in 4-bit NF4 (attn=sdpa)
+==============================================================================
+Loading weights:   0%|          | 0/713 [00:00<?, ?it/s]Loading weights:   0%|          | 1/713 [00:00<07:37,  1.56it/s]Loading weights:   1%|          | 4/713 [00:00<01:47,  6.60it/s]Loading weights:   2%|▏         | 14/713 [00:00<00:28, 24.15it/s]Loading weights:   3%|▎         | 22/713 [00:00<00:19, 35.55it/s]Loading weights:   4%|▍         | 28/713 [00:01<00:18, 38.00it/s]Loading weights:   5%|▌         | 37/713 [00:01<00:14, 46.62it/s]Loading weights:   7%|▋         | 47/713 [00:01<00:11, 56.93it/s]Loading weights:   8%|▊         | 55/713 [00:01<00:10, 61.25it/s]Loading weights:   9%|▊         | 62/713 [00:01<00:10, 61.64it/s]Loading weights:  10%|▉         | 70/713 [00:01<00:10, 59.89it/s]Loading weights:  11%|█         | 78/713 [00:01<00:09, 64.17it/s]Loading weights:  12%|█▏        | 85/713 [00:01<00:10, 58.09it/s]Loading weights:  13%|█▎        | 92/713 [00:02<00:10, 56.86it/s]Loading weights:  14%|█▍        | 102/713 [00:02<00:09, 64.40it/s]Loading weights:  15%|█▌        | 110/713 [00:02<00:09, 66.71it/s]Loading weights:  16%|█▋        | 117/713 [00:02<00:09, 61.38it/s]Loading weights:  18%|█▊        | 125/713 [00:02<00:09, 62.38it/s]Loading weights:  19%|█▊        | 132/713 [00:02<00:09, 64.12it/s]Loading weights:  19%|█▉        | 139/713 [00:02<00:10, 56.45it/s]Loading weights:  20%|██        | 146/713 [00:02<00:09, 59.37it/s]Loading weights:  21%|██▏       | 153/713 [00:04<00:35, 15.66it/s]Loading weights:  22%|██▏       | 158/713 [00:04<00:35, 15.81it/s]Loading weights:  23%|██▎       | 163/713 [00:04<00:29, 18.96it/s]Loading weights:  24%|██▎       | 168/713 [00:04<00:24, 22.27it/s]Loading weights:  24%|██▍       | 173/713 [00:04<00:23, 23.14it/s]Loading weights:  25%|██▌       | 179/713 [00:05<00:19, 27.45it/s]Loading weights:  26%|██▌       | 183/713 [00:05<00:18, 28.77it/s]Loading weights:  27%|██▋       | 190/713 [00:05<00:15, 34.38it/s]Loading weights:  27%|██▋       | 195/713 [00:05<00:14, 35.89it/s]Loading weights:  28%|██▊       | 202/713 [00:05<00:13, 39.20it/s]Loading weights:  29%|██▉       | 210/713 [00:05<00:10, 47.81it/s]Loading weights:  30%|███       | 216/713 [00:05<00:10, 45.60it/s]Loading weights:  31%|███▏      | 223/713 [00:05<00:09, 51.11it/s]Loading weights:  32%|███▏      | 229/713 [00:06<00:09, 50.90it/s]Loading weights:  33%|███▎      | 235/713 [00:06<00:09, 50.63it/s]Loading weights:  34%|███▍      | 245/713 [00:06<00:08, 56.93it/s]Loading weights:  35%|███▌      | 251/713 [00:06<00:08, 52.97it/s]Loading weights:  36%|███▌      | 257/713 [00:06<00:09, 48.83it/s]Loading weights:  37%|███▋      | 262/713 [00:06<00:09, 48.74it/s]Loading weights:  37%|███▋      | 267/713 [00:06<00:09, 48.03it/s]Loading weights:  38%|███▊      | 272/713 [00:06<00:10, 43.78it/s]Loading weights:  39%|███▉      | 278/713 [00:07<00:09, 45.13it/s]Loading weights:  40%|███▉      | 283/713 [00:07<00:10, 42.53it/s]Loading weights:  41%|████      | 289/713 [00:07<00:09, 43.65it/s]Loading weights:  41%|████      | 294/713 [00:07<00:10, 40.67it/s]Loading weights:  42%|████▏     | 300/713 [00:07<00:09, 42.45it/s]Loading weights:  43%|████▎     | 305/713 [00:07<00:09, 40.81it/s]Loading weights:  44%|████▎     | 311/713 [00:07<00:09, 42.33it/s]Loading weights:  44%|████▍     | 316/713 [00:08<00:10, 38.90it/s]Loading weights:  45%|████▌     | 322/713 [00:08<00:10, 38.86it/s]Loading weights:  46%|████▌     | 326/713 [00:08<00:11, 34.96it/s]Loading weights:  47%|████▋     | 333/713 [00:08<00:09, 38.28it/s]Loading weights:  47%|████▋     | 337/713 [00:08<00:10, 35.75it/s]Loading weights:  48%|████▊     | 344/713 [00:08<00:09, 38.61it/s]Loading weights:  49%|████▉     | 348/713 [00:08<00:10, 34.26it/s]Loading weights:  50%|████▉     | 355/713 [00:09<00:09, 38.18it/s]Loading weights:  50%|█████     | 359/713 [00:09<00:10, 35.35it/s]Loading weights:  51%|█████▏    | 366/713 [00:09<00:08, 39.64it/s]Loading weights:  52%|█████▏    | 370/713 [00:09<00:09, 36.74it/s]Loading weights:  53%|█████▎    | 377/713 [00:09<00:08, 39.19it/s]Loading weights:  53%|█████▎    | 381/713 [00:09<00:09, 34.64it/s]Loading weights:  54%|█████▍    | 388/713 [00:10<00:08, 37.57it/s]Loading weights:  55%|█████▌    | 394/713 [00:10<00:07, 41.34it/s]Loading weights:  60%|██████    | 428/713 [00:10<00:02, 110.87it/s]Loading weights:  66%|██████▋   | 474/713 [00:10<00:01, 197.67it/s]Loading weights:  73%|███████▎  | 522/713 [00:10<00:00, 271.71it/s]Loading weights:  80%|███████▉  | 570/713 [00:10<00:00, 320.22it/s]Loading weights:  85%|████████▌ | 608/713 [00:10<00:00, 330.99it/s]Loading weights:  92%|█████████▏| 654/713 [00:10<00:00, 364.14it/s]Loading weights:  97%|█████████▋| 692/713 [00:10<00:00, 349.37it/s]Loading weights: 100%|██████████| 713/713 [00:11<00:00, 64.79it/s] 
+  weights resident       2.76 GiB reserved
+  prepare_for_kbit       False
+  param memory by dtype  uint8 1.88 GiB, bfloat16 0.73 GiB, float32 0.25 GiB
+  trainable params       66,060,288 / 2,481,697,280 (2.662%)
+    in vision tower      0   <- must be 0
+    in LLM decoder       66,060,288
+    elsewhere            0
+  resident after LoRA    2.98 GiB reserved  (4.19 GiB used on device, 7.75 GiB free)
+
+------------------------------------------------------------------------------
+RESOLUTION 448px long edge
+------------------------------------------------------------------------------
+  resized to             448x274
+  token grid             9x14 (32px per token)
+  IMAGE TOKENS           126
+  prompt tokens (total)  182
+  full seq len           623
+  image share of seq     20.2%
+  forward                peak   4.15 GiB      361 ms  loss 0.2549
+  backward (no ckpt)     peak  12.61 GiB    27859 ms  <-- EXCEEDS VRAM (host spill)
+  backward (ckpt)        peak  12.61 GiB    14759 ms  <-- EXCEEDS VRAM (host spill)
+
+------------------------------------------------------------------------------
+RESOLUTION 768px long edge
+------------------------------------------------------------------------------
+  resized to             768x469
+  token grid             15x24 (32px per token)
+  IMAGE TOKENS           360
+  prompt tokens (total)  416
+  full seq len           857
+  image share of seq     42.0%
+  forward                peak   4.71 GiB      489 ms  loss 0.2838

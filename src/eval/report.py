@@ -129,13 +129,21 @@ def main() -> None:
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--title", default="Baselines")
     ap.add_argument("--preamble", default="")
+    ap.add_argument(
+        "--preamble-file", type=Path, default=None,
+        help="markdown prepended to the table; easier than passing prose through argv",
+    )
     args = ap.parse_args()
+
+    preamble = args.preamble
+    if args.preamble_file:
+        preamble = args.preamble_file.read_text(encoding="utf-8")
 
     runs = []
     for item in args.run:
         name, _, path = item.partition("=")
         runs.append((name.strip(), Path(path.strip())))
-    build(runs, args.out, args.title, args.preamble)
+    build(runs, args.out, args.title, preamble)
 
 
 if __name__ == "__main__":

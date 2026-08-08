@@ -1,14 +1,46 @@
+# --- python -----------------------------------------------------------------
 .venv/
 __pycache__/
 *.pyc
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
 
-# datasets and checkpoints are large; regenerate or re-download
+# --- editors ----------------------------------------------------------------
+.vscode/
+.idea/
+
+# --- large / regenerable data -----------------------------------------------
+# Chart images are regenerable: `src/data/synth_eval.py` is seeded, and the
+# real-chart fetcher is deterministic. The *manifests* (data/eval/**/*.jsonl)
+# carry the gold values and ARE committed — they are the actual ground truth
+# and they are small. Losing the PNGs costs a regeneration; losing the
+# manifests would invalidate every score in the repo.
+data/eval/**/images/
 data/raw/
 data/processed/
+
+# Training data, once Phase 2 generates it (8-12k charts).
+data/train/
+
+# --- model artefacts --------------------------------------------------------
 outputs/
 checkpoints/
+adapters/
 *.safetensors
-wandb/
+*.gguf
+*.bin
+*.pt
 
-# keep the prompt brief out of the public repo
+# --- experiment tracking ----------------------------------------------------
+wandb/
+runs/
+
+# --- kept deliberately ------------------------------------------------------
+# results/preds/*.jsonl and results/scores/*.json are committed. They are the
+# evidence behind every number in the README, including the runs that failed —
+# standing rule 7 says negative results stay in the repo.
+
+# --- local only -------------------------------------------------------------
+# The engineering brief is not part of the public repo.
 prompt.md

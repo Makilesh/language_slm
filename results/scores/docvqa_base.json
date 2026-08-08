@@ -1,0 +1,16 @@
+{
+  "anls": 0.9237,
+  "exact_match": 0.86,
+  "n": 200,
+  "n_errors": 0,
+  "config": {
+    "model": "Qwen/Qwen3-VL-4B-Instruct",
+    "adapter": null,
+    "dtype": "4bit",
+    "dataset": "nielsr/docvqa_1200_examples",
+    "split": "test",
+    "long_edge": 1024,
+    "max_new_tokens": 48,
+    "anls_threshold": 0.5
+  }
+}

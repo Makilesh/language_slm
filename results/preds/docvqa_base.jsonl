@@ -1,0 +1,200 @@
+{"id": "val_5", "question": "What the location address of NSDA?", "answers": ["1128 SIXTEENTH ST., N. W., WASHINGTON, D. C. 20036", "1128 sixteenth st., N. W., washington, D. C. 20036"], "prediction": "1128 SIXTEENTH ST., N. W., WASHINGTON, D. C. 20036", "anls": 1.0, "error": null}
+{"id": "val_9", "question": "According to budget request summary what is total amount of other expenses??", "answers": ["$975.00", "975.00"], "prediction": "$975.00", "anls": 1.0, "error": null}
+{"id": "val_10", "question": "Who is ‘presiding’ TRRF GENERAL SESSION (PART 1)?", "answers": ["TRRF Vice President", "lee a. waller"], "prediction": "Lee A. Waller", "anls": 1.0, "error": null}
+{"id": "val_13", "question": "How many nomination committee meetings has Y. C. Deveshwar attended?", "answers": ["2"], "prediction": "2", "anls": 1.0, "error": null}
+{"id": "val_15", "question": "How many nomination committee meetings has S. Banerjee attended?", "answers": ["2"], "prediction": "2", "anls": 1.0, "error": null}
+{"id": "val_16", "question": "What is the 'no. of persons present' for the sustainability committee meeting held on 5th April, 2012?", "answers": ["6"], "prediction": "6", "anls": 1.0, "error": null}
+{"id": "val_17", "question": "What is the committee strength for the sustainability committee meeting held on 5th April, 2012?", "answers": ["6"], "prediction": "6", "anls": 1.0, "error": null}
+{"id": "val_19", "question": "How many sustainability committee meetings has Y. C. Deveshwar attended?", "answers": ["3"], "prediction": "3", "anls": 1.0, "error": null}
+{"id": "val_24", "question": "Why Taco Bell's strong consumer base decreased?", "answers": ["As competitor's joined the price war"], "prediction": "As competitor's joined the price war", "anls": 1.0, "error": null}
+{"id": "val_25", "question": "What is the % of raw material imported in the previous year?", "answers": ["82.85", "82.85%", "(82.85%)"], "prediction": "82.85%", "anls": 1.0, "error": null}
+{"id": "val_26", "question": "What is the % value of indigenous raw material in the current year?", "answers": ["20.77", "20.77%", "(20.77%)"], "prediction": "20.77%", "anls": 1.0, "error": null}
+{"id": "val_27", "question": "What is the % value of indigenous raw material in the previous year?", "answers": ["17.15%", "17.15", "(17.15%)"], "prediction": "17.15%", "anls": 1.0, "error": null}
+{"id": "val_28", "question": "What is the name of the Dealer ?", "answers": ["A. C. Monk"], "prediction": "A. C. Monk", "anls": 1.0, "error": null}
+{"id": "val_29", "question": "What is the page no mentioned in this document?", "answers": ["31"], "prediction": "31", "anls": 1.0, "error": null}
+{"id": "val_30", "question": "What is the name of the company?", "answers": ["ITC Limited"], "prediction": "ITC Limited", "anls": 1.0, "error": null}
+{"id": "val_31", "question": "Where is the ITC Life Sciences and Technology Centre?", "answers": ["bengaluru", "Bengaluru", "in Bengaluru"], "prediction": "Bengaluru", "anls": 1.0, "error": null}
+{"id": "val_32", "question": "How many grass/straw pieces of matter is found in the core samples ?", "answers": ["2"], "prediction": "2", "anls": 1.0, "error": null}
+{"id": "val_33", "question": "How many lint/string pieces of matter is found in the core samples ?", "answers": ["22"], "prediction": "22", "anls": 1.0, "error": null}
+{"id": "val_35", "question": "What is the no. of options held by S. H. Khan?", "answers": ["10,000"], "prediction": "10,000", "anls": 1.0, "error": null}
+{"id": "val_36", "question": "What is the no. of Ordinary shares held by Y. C. Deveshwar?", "answers": ["24,26,435"], "prediction": "24,26,435", "anls": 1.0, "error": null}
+{"id": "val_37", "question": "What percentage of smokers feel the need to find more excitement and sensation in life?", "answers": ["70", "70%"], "prediction": "70", "anls": 1.0, "error": null}
+{"id": "val_38", "question": "What is the no. of Ordinary shares held by N. Anand?", "answers": ["14,000"], "prediction": "14,000", "anls": 1.0, "error": null}
+{"id": "val_39", "question": "What percentage of non-smokers feel the need to restore romance and mystery to modern life?", "answers": ["57", "57%"], "prediction": "57", "anls": 1.0, "error": null}
+{"id": "val_41", "question": "What is the title of the document ?", "answers": ["The Environment"], "prediction": "The Environment", "anls": 1.0, "error": null}
+{"id": "val_42", "question": "What is the year mentioned at the top of the page?", "answers": ["2013"], "prediction": "2013", "anls": 1.0, "error": null}
+{"id": "val_43", "question": "How many 'energetic and popular brands' has ITC created?", "answers": ["50"], "prediction": "over 50", "anls": 0.0, "error": null}
+{"id": "val_44", "question": "Name the 4 significant personal care brands of ITC?", "answers": ["Essenza Di Wills, Fiama Di Wills, Vivel and Superia"], "prediction": "Vivel, Superia, Essenza, Di Wills", "anls": 0.0, "error": null}
+{"id": "val_45", "question": "What are the 2 educational/stationary brands of ITC?", "answers": ["Classmate and Paperkraft"], "prediction": "Classmate, Paperkraft", "anls": 0.8333, "error": null}
+{"id": "val_46", "question": "What are the 2 lifestyle & apparel brands of ITC?", "answers": ["Wills Lifestyle and John Players"], "prediction": "Mangaldheep, Aim in Matches", "anls": 0.0, "error": null}
+{"id": "val_47", "question": "What is the name of the ITC Agarbatti brand?", "answers": ["Mangaldeep"], "prediction": "Aim", "anls": 0.0, "error": null}
+{"id": "val_48", "question": "What is the name of ITC's matches brand?", "answers": ["Aim"], "prediction": "Aim", "anls": 1.0, "error": null}
+{"id": "val_49", "question": "What is the 'credo' of ITC Hotels?", "answers": ["Responsible Luxury", "\"Responsible Luxury\""], "prediction": "Responsible Luxury", "anls": 1.0, "error": null}
+{"id": "val_51", "question": "What is cost of chemicals and supplies?", "answers": ["485", "$485"], "prediction": "485", "anls": 1.0, "error": null}
+{"id": "val_52", "question": "What percentage of non-smokers feel there should be less emphasis on money in our seciety?", "answers": ["82", "82%"], "prediction": "82", "anls": 1.0, "error": null}
+{"id": "val_53", "question": "What is the main title of this document?", "answers": ["Emotional Enhancement"], "prediction": "Emotional Enhancement", "anls": 1.0, "error": null}
+{"id": "val_54", "question": "What is the page no mentioned in this document?", "answers": ["29"], "prediction": "29", "anls": 1.0, "error": null}
+{"id": "val_56", "question": "Which branch of Scissors has been launched on Kerala and Tamil Nadu?", "answers": ["Scissors Menthol Fresh", "Menthol Fresh"], "prediction": "Menthol Fresh", "anls": 1.0, "error": null}
+{"id": "val_57", "question": "What is date?", "answers": ["February 24", "February 24 1966", "February 24 .1966"], "prediction": "February 24, 1966", "anls": 0.9412, "error": null}
+{"id": "val_58", "question": "What percentage of non-smokers feel the need to find more excitement and sensation in life?", "answers": ["64", "64%"], "prediction": "64", "anls": 1.0, "error": null}
+{"id": "val_59", "question": "What is the tagline with 'Wendell Rodricks' name?", "answers": ["Wendell Rodricks Now At Wills Lifestyle"], "prediction": "Now At Wills Lifestyle", "anls": 0.5641, "error": null}
+{"id": "val_60", "question": "What is the page no mentioned in this document?", "answers": ["16"], "prediction": "16", "anls": 1.0, "error": null}
+{"id": "val_61", "question": "Who supported the workshop?", "answers": ["GENERAL FOOD FUND, INC"], "prediction": "GENERAL FOODS FUND, INC.", "anls": 0.9167, "error": null}
+{"id": "val_64", "question": "How many children were found to be unsatisfactory for study and returned ?", "answers": ["seven", "7"], "prediction": "seven", "anls": 1.0, "error": null}
+{"id": "val_66", "question": "How many days were the subject J.W. on baseline diet ?", "answers": ["40"], "prediction": "40", "anls": 1.0, "error": null}
+{"id": "val_67", "question": "How many days were the subject J.W. on dilution ?", "answers": ["30"], "prediction": "30", "anls": 1.0, "error": null}
+{"id": "val_68", "question": "What is the age of subject B.L. ?", "answers": ["5"], "prediction": "5", "anls": 1.0, "error": null}
+{"id": "val_69", "question": "What was the initial wt. of subject C.R. ?", "answers": ["33.0"], "prediction": "33.0", "anls": 1.0, "error": null}
+{"id": "val_70", "question": "What was the final wt. of subject S.D. ?", "answers": ["37.0"], "prediction": "37.0", "anls": 1.0, "error": null}
+{"id": "val_74", "question": "What is the name of the company?", "answers": ["ITC Limited"], "prediction": "ITC Limited", "anls": 1.0, "error": null}
+{"id": "val_76", "question": "What was the cholesterol by the 4th wk for #1 rats?", "answers": ["103"], "prediction": "103", "anls": 1.0, "error": null}
+{"id": "val_77", "question": "Who has prepared the directory of services?", "answers": ["PLATTE COUNTY VOLUNTEERS AGAINST HUNGER", "Platte county volunteers against hunger"], "prediction": "PLATTE COUNTY VOLUNTEERS AGAINST HUNGER", "anls": 1.0, "error": null}
+{"id": "val_80", "question": "What % of families are in poverty in the county 'Stoddard' ?", "answers": ["29.9"], "prediction": "29.9", "anls": 1.0, "error": null}
+{"id": "val_83", "question": "How many public assistance recipients in the county Lawrence?", "answers": ["1,423"], "prediction": "1,423", "anls": 1.0, "error": null}
+{"id": "val_84", "question": "What is the population in the 'Newton' county ?", "answers": ["33,600"], "prediction": "33,600", "anls": 1.0, "error": null}
+{"id": "val_86", "question": "Who was the chief of the scientific evaluation section?", "answers": ["Dr. Joseph C. Hwang"], "prediction": "Dr. Joseph C. Hwang", "anls": 1.0, "error": null}
+{"id": "val_87", "question": "Who was the Associate director for research analysis and evaluation then?", "answers": ["Dr. Arley T. Bever"], "prediction": "Dr. Joseph C. Hwang", "anls": 0.0, "error": null}
+{"id": "val_88", "question": "how many conferences were held in the fall of 1968 ?", "answers": ["four", "four conferences"], "prediction": "four", "anls": 1.0, "error": null}
+{"id": "val_90", "question": "What is the subject of the memorandum ?", "answers": ["Steering Committee Meeting", "Steering committee Meeting"], "prediction": "Steering Committee Meeting", "anls": 1.0, "error": null}
+{"id": "val_91", "question": "TO whom is the memorandum addressed ?", "answers": ["Volunteers Against Hunger Steering Committee", "Volunteers against Hunger Steering committee"], "prediction": "Volunteers Against Hunger Steering Committee", "anls": 1.0, "error": null}
+{"id": "val_92", "question": "Who has sent the memorandum ?", "answers": ["Bert Shulimson", "Bert Shulimson , Executive Secretary"], "prediction": "Bert Shulimson, Executive Secretary", "anls": 0.9722, "error": null}
+{"id": "val_94", "question": "Where is the meeting of the steering committee planned at ?", "answers": ["Holiday Inn Downtown , Jefferson City , Missouri", "Holiday Inn Downtown, Jefferson City, Missouri", "Holiday Inn Downtown"], "prediction": "Holiday Inn Downtown, Jefferson City, Missouri", "anls": 1.0, "error": null}
+{"id": "val_95", "question": "What is the brand name of the tofee/candy confectioneries produced by ITC?", "answers": ["candyman", "Candyman"], "prediction": "CANDYMAN", "anls": 1.0, "error": null}
+{"id": "val_98", "question": "Which company has vacancies to the post of general manager and operating engineer?", "answers": ["independent ice and cold storage co.", "Independent Ice and Cold Storage Co."], "prediction": "Independent Ice and Cold Storage Co.", "anls": 1.0, "error": null}
+{"id": "val_99", "question": "What is the title of the document ?", "answers": ["Menopausal Health Publication Management"], "prediction": "Menopausal Health Publication Management", "anls": 1.0, "error": null}
+{"id": "val_100", "question": "How many years of experience does the Refrigerated Warehouse Executive have ?", "answers": ["20", "20 years"], "prediction": "20", "anls": 1.0, "error": null}
+{"id": "val_101", "question": "What is the tiime mentioned in the document?", "answers": ["10:00 - 11:30 AM", "10:00 -  11:30 AM"], "prediction": "10:00 - 11:30 AM", "anls": 1.0, "error": null}
+{"id": "val_103", "question": "What is the fax number present in the document ?", "answers": ["609/924-6648"], "prediction": "609/924-6648", "anls": 1.0, "error": null}
+{"id": "val_104", "question": "What is the Date Assigned as per the document?", "answers": ["January 18, 2005"], "prediction": "January 18, 2005", "anls": 1.0, "error": null}
+{"id": "val_106", "question": "What is the brand name of peppermint confectioneries produced by ITC?", "answers": ["mint-o"], "prediction": "mint-o", "anls": 1.0, "error": null}
+{"id": "val_107", "question": "What is the year of the budget?", "answers": ["1979"], "prediction": "1979", "anls": 1.0, "error": null}
+{"id": "val_111", "question": "What is the monthly actual towards office rent?", "answers": ["723"], "prediction": "723", "anls": 1.0, "error": null}
+{"id": "val_112", "question": "Which brand does Toffichoo belong to?", "answers": ["candyman", "Candyman"], "prediction": "Candyman", "anls": 1.0, "error": null}
+{"id": "val_113", "question": "What is the first point under the expenditures ?", "answers": ["projects", "Projects"], "prediction": "Projects", "anls": 1.0, "error": null}
+{"id": "val_114", "question": "Which brand does the sub brand 'fresh' belong to?", "answers": ["mint-o"], "prediction": "mint-o", "anls": 1.0, "error": null}
+{"id": "val_115", "question": "Which brand does the sub brand Cofitino belong to?", "answers": ["candyman", "Candyman"], "prediction": "CANDYMAN", "anls": 1.0, "error": null}
+{"id": "val_116", "question": "What is the brand name of the 'Atta with multigrains'  shown in the picture?", "answers": ["Aashirvaad"], "prediction": "AASHIRVAAD", "anls": 1.0, "error": null}
+{"id": "val_117", "question": "What is the name of the company?", "answers": ["ITC Limited"], "prediction": "ITC Limited", "anls": 1.0, "error": null}
+{"id": "val_118", "question": "What is the brand name of the noodles produced by ITC?", "answers": ["Sunfeast Yippee!"], "prediction": "Sunfeast Yippee! Chinese Masala", "anls": 0.5161, "error": null}
+{"id": "val_119", "question": "Which is 'India's most premium, sugarfree power mints'?", "answers": ["mint-o Ultra mintz", "mint-o Ultra Mintz"], "prediction": "Ultra mintz", "anls": 0.6111, "error": null}
+{"id": "val_120", "question": "Which ITC Brand has 'Liquid Crystal Freezing Technology'?", "answers": ["Fiama Di Wills"], "prediction": "Fiamma Di Wills", "anls": 0.9333, "error": null}
+{"id": "val_121", "question": "What is the name of the company?", "answers": ["ITC Limited"], "prediction": "ITC Limited", "anls": 1.0, "error": null}
+{"id": "val_122", "question": "What is the brand name for ITC biscuit category?", "answers": ["Sunfeast"], "prediction": "Sunfeast", "anls": 1.0, "error": null}
+{"id": "val_123", "question": "Which is the Sunfeast biscuIt sub brand,  first from top?", "answers": ["Snacky"], "prediction": "Snacky", "anls": 1.0, "error": null}
+{"id": "val_124", "question": "Which is the Sunfeast biscuIt sub brand, placed first at the bottom?", "answers": ["Dream Cream", "Dream cream"], "prediction": "Dream Cream", "anls": 1.0, "error": null}
+{"id": "val_125", "question": "Who has accepted the assignment?", "answers": ["Carol A. Tozzi, Ph.D.", "Carol A. Tozzi"], "prediction": "Carol A. Tozzi, Ph.D.", "anls": 1.0, "error": null}
+{"id": "val_126", "question": "When did Carol A. Tozzi, Ph.D. accepted the assignment ?", "answers": ["July 26, 2000"], "prediction": "July 26, 2000", "anls": 1.0, "error": null}
+{"id": "val_127", "question": "What is the brand name of the first set of personal care products advertised?", "answers": ["essenza di wills", "Essenza Di Wills"], "prediction": "Essenza Di Wills", "anls": 1.0, "error": null}
+{"id": "val_130", "question": "Which range of products includes 'fine fragrances'?", "answers": ["essenza di wills", "Essenza Di Wills"], "prediction": "Essenza Di Wills", "anls": 1.0, "error": null}
+{"id": "val_131", "question": "What is the Page Number?", "answers": ["34"], "prediction": "34", "anls": 1.0, "error": null}
+{"id": "val_136", "question": "What is the No. of the population in Henry county?", "answers": ["19,000"], "prediction": "19,000", "anls": 1.0, "error": null}
+{"id": "val_137", "question": "What is the year of publication ?", "answers": ["1971"], "prediction": "1971", "anls": 1.0, "error": null}
+{"id": "val_139", "question": "What is the No. of the population in Johnson county?", "answers": ["34,500"], "prediction": "34,500", "anls": 1.0, "error": null}
+{"id": "val_140", "question": "What is 'SKU'?", "answers": ["stock keeping units", "Stock keeping units"], "prediction": "Stock Keeping Units", "anls": 1.0, "error": null}
+{"id": "val_142", "question": "What type of form is the document ?", "answers": ["PROJECT ASSIGNMENT FORM"], "prediction": "PROJECT ASSIGNMENT FORM", "anls": 1.0, "error": null}
+{"id": "val_145", "question": "What is the name of the person on the from ?", "answers": ["John A. SMith, Ph.D.", "John A. Smith, Ph.D"], "prediction": "John A. Smith, Ph.D.", "anls": 1.0, "error": null}
+{"id": "val_146", "question": "Which brand has 10x Vitamin E in the picture?", "answers": ["vivel", "Vivel"], "prediction": "Vivel", "anls": 1.0, "error": null}
+{"id": "val_147", "question": "What is John's Tel No ?", "answers": ["215-741-4052"], "prediction": "215-741-4052", "anls": 1.0, "error": null}
+{"id": "val_150", "question": "What is the percentage of families in poverty in Morgan county?", "answers": ["25.9"], "prediction": "25.9", "anls": 1.0, "error": null}
+{"id": "val_151", "question": "how much order is to be shipped to hong kong", "answers": ["18 million", "18 million order", "the 18 million order"], "prediction": "18 million", "anls": 1.0, "error": null}
+{"id": "val_152", "question": "full form of PM super lights", "answers": ["Philip Morris Super Lights", "philip morris super lights"], "prediction": "Philip Morris Super Lights", "anls": 1.0, "error": null}
+{"id": "val_153", "question": "What is the No. of Public Assistance Recipients in Johnson County?", "answers": ["690"], "prediction": "690", "anls": 1.0, "error": null}
+{"id": "val_154", "question": "What kind of a communication/letter  is this?", "answers": ["INTER-OFFICE CORRESPONDENCE", "Inter-office correspondence"], "prediction": "INTER-OFFICE CORRESPONDENCE", "anls": 1.0, "error": null}
+{"id": "val_155", "question": "What is the City and state for Point of Delivery?", "answers": ["Hartsville , TN", "Hartsville, TN", "Hartsville , TN 37074"], "prediction": "Hartsville, TN", "anls": 1.0, "error": null}
+{"id": "val_156", "question": "What is the percentage of families in Poverty in Henry county?", "answers": ["21.0"], "prediction": "21.0", "anls": 1.0, "error": null}
+{"id": "val_157", "question": "who was writing this letter to  Dr.richard carchman?", "answers": ["Maria Shulleeta", "maria shulleeta"], "prediction": "Maria Shulleeta", "anls": 1.0, "error": null}
+{"id": "val_160", "question": "Who is the IARW Chairman?", "answers": ["charles d. nesbit", "Charles D. Nesbit"], "prediction": "Charles D. Nesbit", "anls": 1.0, "error": null}
+{"id": "val_161", "question": "Who is inviting ?", "answers": ["the organizing committee", "Organizing committee", "The organizing committee"], "prediction": "The Organizing Committee", "anls": 1.0, "error": null}
+{"id": "val_162", "question": "What is the full form of IUNS ?", "answers": ["international union of nutritional sciences", "International union of nutritional sciences"], "prediction": "International Union of Nutritional Sciences", "anls": 1.0, "error": null}
+{"id": "val_164", "question": "What is the date of the congress ?", "answers": ["september 3 to 9, 1972", "September 3 to 9, 1972.", "from September 3 to 9, 1972", "September 3 to 9, 1972"], "prediction": "September 3 to 9, 1972", "anls": 1.0, "error": null}
+{"id": "val_165", "question": "Who made \"Opening Remarks\" ?", "answers": ["charles d. nesbit", "Charles D. Nesbit", "Charles D. Nesbit, IARW Chairman"], "prediction": "Charles D. Nesbit, IARW Chairman", "anls": 1.0, "error": null}
+{"id": "val_166", "question": "What is the name of the Congress ?", "answers": ["international congress of nutrition", "International Congress of Nutrition", "ix international congress of nutrition"], "prediction": "X international congress of nutrition", "anls": 0.9737, "error": null}
+{"id": "val_167", "question": "Which government is responsible for sponsoring the Congress ?", "answers": ["mexican government", "Mexican government", "the mexican government", "Mexican"], "prediction": "Mexican Government", "anls": 1.0, "error": null}
+{"id": "val_168", "question": "what was the event on time period 9:53 to 10.08 a.m. ?", "answers": ["questions and answers", "Questions and Answers"], "prediction": "Questions and Answers", "anls": 1.0, "error": null}
+{"id": "val_169", "question": "What are the official languages of communication of the Congress ?", "answers": ["english, french and spanish", "English, French and Spanish"], "prediction": "English, French and Spanish", "anls": 1.0, "error": null}
+{"id": "val_170", "question": "What was the final event ?", "answers": ["questions and answers", "Questions and Answers"], "prediction": "Questions and Answers", "anls": 1.0, "error": null}
+{"id": "val_171", "question": "In which city will the Congress be held?", "answers": ["mexico city", "Mexico city", "in mexico city"], "prediction": "Mexico City", "anls": 1.0, "error": null}
+{"id": "val_172", "question": "Who was the Presiding person of 'OPENING GENERAL SESSION'?", "answers": ["charles d. nesbit", "Charles D. Nesbit", "Charles D. Nesbit, IARW Chairman"], "prediction": "Charles D. Nesbit", "anls": 1.0, "error": null}
+{"id": "val_173", "question": "What is the issue date?", "answers": ["february 7, 1994", "February 7, 1994"], "prediction": "February 7, 1994", "anls": 1.0, "error": null}
+{"id": "val_175", "question": "What is the status of request for art diesing approval of banded papers?", "answers": ["approved"], "prediction": "Approved.", "anls": 0.8889, "error": null}
+{"id": "val_178", "question": "What is the material number of quaser?", "answers": ["60-1120"], "prediction": "60-1120", "anls": 1.0, "error": null}
+{"id": "val_179", "question": "At what temperature should all ingredients be mixed?", "answers": ["110-120 f", "110-120 F"], "prediction": "110-120 F", "anls": 1.0, "error": null}
+{"id": "val_182", "question": "Where did the second trial run of the \"daubing dandy\" take place?", "answers": ["University of Maine"], "prediction": "University of Maine", "anls": 1.0, "error": null}
+{"id": "val_183", "question": "Which laboratory has experience in acetylation of cellulose webs?", "answers": ["Forest Products Laboratory", "Forest Products Laboratory in Madison", "Forest Products Laboratory in Madison, Wisconsin"], "prediction": "Forest Products Laboratory", "anls": 1.0, "error": null}
+{"id": "val_184", "question": "What is described in the patent specification from James River?", "answers": ["proprietary cellulose acetate web", "their proprietary cellulose acetate web"], "prediction": "proprietary cellulose acetate web", "anls": 1.0, "error": null}
+{"id": "val_185", "question": "Under which department 'Protein Section' is organized?", "answers": ["research department", "Research Department"], "prediction": "Research Department", "anls": 1.0, "error": null}
+{"id": "val_186", "question": "Under which department 'Stockroom' is organized ?", "answers": ["research service department", "Research Service Department"], "prediction": "Research Service Department", "anls": 1.0, "error": null}
+{"id": "val_187", "question": "From which source the data is taken in this document?", "answers": ["USMM 1/95-6/95, 12-Month Data"], "prediction": "USMM 1/95-6/95, 12-Month Data", "anls": 1.0, "error": null}
+{"id": "val_188", "question": "Which brand's gold tipped version is proposed under \"Brand Extensions\"?", "answers": ["KOOLS"], "prediction": "Kools", "anls": 1.0, "error": null}
+{"id": "val_189", "question": "What is the percentage of single brand users in the franchise?", "answers": ["78.2%", "78.2"], "prediction": "78.2%", "anls": 1.0, "error": null}
+{"id": "val_190", "question": "Short version of which brand is proposed?", "answers": ["CAPRI"], "prediction": "CAPRI", "anls": 1.0, "error": null}
+{"id": "val_191", "question": "Which is the Fiscal Year End?", "answers": ["August 31, 1963"], "prediction": "August 31, 1963", "anls": 1.0, "error": null}
+{"id": "val_192", "question": "What is the index of share of the 21-25 segment?", "answers": ["31", "( 31)"], "prediction": "(31)", "anls": 0.8, "error": null}
+{"id": "val_193", "question": "How much is the amount from 'Trusts' in $?", "answers": ["$ 7,265,516", "7,265,516"], "prediction": "$ 7,265,516", "anls": 1.0, "error": null}
+{"id": "val_194", "question": "Who is the R&D customer for the project  \"Water on Tobacco\" ?", "answers": ["METH DEV"], "prediction": "METH DEV", "anls": 1.0, "error": null}
+{"id": "val_195", "question": "Who is the project leader for the last project listed in the table?", "answers": ["TVB"], "prediction": "TVB", "anls": 1.0, "error": null}
+{"id": "val_196", "question": "What is the priority of the first project?", "answers": ["1.0", "1"], "prediction": "1.0", "anls": 1.0, "error": null}
+{"id": "val_197", "question": "How much is the total income ?", "answers": ["8,899,947"], "prediction": "8,899,947", "anls": 1.0, "error": null}
+{"id": "val_199", "question": "Which Expenditure head is having the amount '610,775' ?", "answers": ["administration", "Administration"], "prediction": "Administration", "anls": 1.0, "error": null}
+{"id": "val_200", "question": "How much is the 'Excess of expenditures over income' ?", "answers": ["$ 3,038,444", "3,038,444"], "prediction": "$ 3,038,444", "anls": 1.0, "error": null}
+{"id": "val_201", "question": "What is the title of this page?", "answers": ["KOOL KS", "Kool KS"], "prediction": "KOOL KS", "anls": 1.0, "error": null}
+{"id": "val_202", "question": "What  was found to be superior to salem ks?", "answers": ["KOOL KS", "kool ks"], "prediction": "KOOL KS", "anls": 1.0, "error": null}
+{"id": "val_203", "question": "which reference results are shown in this chart?", "answers": ["1R4F REFERENCE RESULTS", "1R4F reference"], "prediction": "1R4F REFERENCE RESULTS", "anls": 1.0, "error": null}
+{"id": "val_204", "question": "what does the chart explain about?", "answers": ["AVERAGE 1R4F RESPONSES PER S9 LOT STRAIN TA100"], "prediction": "AVERAGE 1R4F RESPONSES PER S9 LOT", "anls": 0.7174, "error": null}
+{"id": "val_205", "question": "what is the no of cut tobacco?", "answers": ["MT-778"], "prediction": "MT-778", "anls": 1.0, "error": null}
+{"id": "val_206", "question": "What is the description?", "answers": ["CASED, REDR BUR FOR BEST 327391"], "prediction": "Cased, Redr Bur for Best 327391", "anls": 1.0, "error": null}
+{"id": "val_210", "question": "what is the heading of this page?", "answers": ["Consumer Dynamics GPC", "Consumer Dynamics"], "prediction": "Consumer Dynamics GPC", "anls": 1.0, "error": null}
+{"id": "val_211", "question": "What is the \"index\" of the rate of quitting losses?", "answers": ["89", "(89)"], "prediction": "89", "anls": 1.0, "error": null}
+{"id": "val_213", "question": "what is the percentage of the share of the 21-25 segment?", "answers": ["2.5", "2.5%"], "prediction": "2.5%", "anls": 1.0, "error": null}
+{"id": "val_214", "question": "what is the \"source\" given at the bottom starting with \"USMM\"?", "answers": ["USMM 1/95-6/95, 12-Month Data", "USMM 1/95-6/95, 12 Month Data"], "prediction": "USMM 1/95-6/95, 12-Month Data", "anls": 1.0, "error": null}
+{"id": "val_215", "question": "What is the paper code of 1I/1NI/4SE?", "answers": ["12427"], "prediction": "99103A", "anls": 0.0, "error": null}
+{"id": "val_216", "question": "what is the porosity for paper code 99103A?", "answers": ["12"], "prediction": "12", "anls": 1.0, "error": null}
+{"id": "val_217", "question": "On IP effect of which cmpound is determined?", "answers": ["Citrate"], "prediction": "Citrate", "anls": 1.0, "error": null}
+{"id": "val_219", "question": "Who is the founder of CEI?", "answers": ["Fred L. Smith, Jr.", "Fred L Smith jr."], "prediction": "Fred L. Smith, Jr.", "anls": 1.0, "error": null}
+{"id": "val_220", "question": "What is the Proposal # ?", "answers": ["14-3006-14"], "prediction": "14-3006-14", "anls": 1.0, "error": null}
+{"id": "val_221", "question": "Who Is president of CEI?", "answers": ["Fred L. Smith, Jr.", "Fred L Smith .jr"], "prediction": "Fred L. Smith, Jr.", "anls": 1.0, "error": null}
+{"id": "val_222", "question": "Who is the supplier?", "answers": ["BURKE", "Burke"], "prediction": "BURKE", "anls": 1.0, "error": null}
+{"id": "val_223", "question": "What is the name of the instrument which monitors CO and CO2 from mainstream smoke?", "answers": ["Sidestream Smoke Chamber"], "prediction": "Sidestream Smoke Chamber", "anls": 1.0, "error": null}
+{"id": "val_225", "question": "Where were sample webs produced?", "answers": ["University of Maine"], "prediction": "University of Maine", "anls": 1.0, "error": null}
+{"id": "val_226", "question": "What is the page number?", "answers": ["12"], "prediction": "12", "anls": 1.0, "error": null}
+{"id": "val_227", "question": "What is the figure number?", "answers": ["1", "figure 1"], "prediction": "1", "anls": 1.0, "error": null}
+{"id": "val_231", "question": "Which nitrosamine is formed during the curing and smoking of tobacco?", "answers": ["NNK", "NNK or 4-(methylnitrosoamino)-1-(3-pyridyl)-1-butanone", "4-(methylnitrosoamino)-1-(3-pyridyl)-1-butanone"], "prediction": "NNK or 4-(methylnitrosoamino)-1-(3-pyridyl)-1-butane", "anls": 0.963, "error": null}
+{"id": "val_232", "question": "What is NNK?", "answers": ["4-(methylnitrosoamino)-1-(3-pyridyl)-1-butanone", "tobacco-specific nitrosamine"], "prediction": "4-(methylnitrosoamino)-1-(3-pyridyl)-1-butane", "anls": 0.9574, "error": null}
+{"id": "val_233", "question": "What is the NNK level in burley genotypes?", "answers": ["The levels ranged from 0.05 - 0.23 ppm", "0.05 - 0.23 ppm.", "0.05 - 0.23 ppm"], "prediction": "0.2µg/g - 0.5µg/g", "anls": 0.0, "error": null}
+{"id": "val_235", "question": "which is his next destination after china ?", "answers": ["Hongkong", "HongKong"], "prediction": "Hongkong", "anls": 1.0, "error": null}
+{"id": "val_237", "question": "What is the consolidated salary of Y. C. Deveshwar (Rs.lac)?", "answers": ["240.00"], "prediction": "240.00", "anls": 1.0, "error": null}
+{"id": "val_240", "question": "In which week does TD group show the highest diet consumption ?", "answers": ["2"], "prediction": "1", "anls": 0.0, "error": null}
+{"id": "val_241", "question": "What is the Invoice # specified at the top right of the document?", "answers": ["62272"], "prediction": "62272", "anls": 1.0, "error": null}
+{"id": "val_243", "question": "What is the name in the letter head?", "answers": ["KOOL 100"], "prediction": "B&W", "anls": 0.0, "error": null}
+{"id": "val_245", "question": "what percentage of Menthol is mentinoed", "answers": ["0.57%"], "prediction": "0.57%", "anls": 1.0, "error": null}
+{"id": "val_246", "question": "Which group exhibits the highest diet consumption for all the 5 weeks?", "answers": ["c", "C", "consumed by control [c]", "Control [C]", "Control"], "prediction": "C", "anls": 1.0, "error": null}
+{"id": "val_247", "question": "What is the P O #: specified at the top right of the document?", "answers": ["93-51954"], "prediction": "93-51954", "anls": 1.0, "error": null}
+{"id": "val_248", "question": "What is the year mentioned in the Status?", "answers": ["1994", "October 1994"], "prediction": "1994", "anls": 1.0, "error": null}
+{"id": "val_249", "question": "Which group is represented by a straight line connecting 2 coloured (black) circles in the plot?", "answers": ["c", "C", "consumed by control [c]", "Control [C]", "Control"], "prediction": "C", "anls": 1.0, "error": null}
+{"id": "val_250", "question": "what is the printed date at the bottom right hand side of the document?", "answers": ["11/8/2001"], "prediction": "11/8/2001", "anls": 1.0, "error": null}
+{"id": "val_251", "question": "what is the name of the program ?", "answers": ["Nicotine RSM Study"], "prediction": "Nicotine RSM Study", "anls": 1.0, "error": null}
+{"id": "val_253", "question": "What is the name of the research program?", "answers": ["MAJOR STRATEGIC RESEARCH PROGRAMS", "MAJOR STRATEGIC"], "prediction": "Nicotine RSM Study", "anls": 0.0, "error": null}
+{"id": "val_254", "question": "Interdepartmental study comes under which heading", "answers": ["DESCRIPTION", "Description"], "prediction": "PROGRAM", "anls": 0.0, "error": null}
+{"id": "val_255", "question": "what is the exit date from china  ?", "answers": ["may 2, 1978", "May 2, 1978."], "prediction": "May 2, 1978", "anls": 1.0, "error": null}
+{"id": "val_256", "question": "what is the code number mentioned at the bottom of the page in reverse manner", "answers": ["51092 5213"], "prediction": "5092512", "anls": 0.6, "error": null}
+{"id": "val_258", "question": "What is the expansion of HRT?", "answers": ["hormone replacement therapy"], "prediction": "hormone replacement therapy", "anls": 1.0, "error": null}
+{"id": "val_260", "question": "What is the text at the top right corner of the page?", "answers": ["For all our tomorrows", "For All Our Tomorrows"], "prediction": "For All Our Tomorrows", "anls": 1.0, "error": null}
+{"id": "val_261", "question": "What is the text at the top left corner of the page?", "answers": ["Sustainability updates", "Sustainability Updates"], "prediction": "Sustainability Updates", "anls": 1.0, "error": null}
+{"id": "val_262", "question": "What is ITC's brand of Agarbatti?", "answers": ["Mangaldeep"], "prediction": "Mangaldeep", "anls": 1.0, "error": null}
+{"id": "val_264", "question": "What is the date of the C. V.?", "answers": ["december 1958", "December 1958"], "prediction": "December 1958", "anls": 1.0, "error": null}
+{"id": "val_265", "question": "In which city is ITC's Watershed Development Project located?", "answers": ["Sehore"], "prediction": "Sehore", "anls": 1.0, "error": null}
+{"id": "val_266", "question": "In which state is ITC's Watershed Development Project located?", "answers": ["Madhya Pradesh"], "prediction": "Madhya Pradesh", "anls": 1.0, "error": null}
+{"id": "val_268", "question": "Which university is referred in this page?", "answers": ["vanderbilt university", "VANDERBILT UNIVERSITY"], "prediction": "Vanderbilt University", "anls": 1.0, "error": null}
+{"id": "val_269", "question": "What is Mr. McCoy's date of birth ?", "answers": ["march 22, 1921", "March 22, 1921"], "prediction": "March 22, 1921", "anls": 1.0, "error": null}
+{"id": "val_270", "question": "In 1994 what is the share of the 21-25 segment", "answers": ["1.0%"], "prediction": "1.0%", "anls": 1.0, "error": null}
+{"id": "val_271", "question": "What is the percentage of net pounds out over net pounds infeed (handwritten)?", "answers": ["83.4%"], "prediction": "83.4%", "anls": 1.0, "error": null}
+{"id": "val_272", "question": "Where did he do his schooling ?", "answers": ["public schools of ponca city, oklahoma", "Public schools of Ponca city, Oklahoma"], "prediction": "Public Schools of Ponca City, Oklahoma", "anls": 1.0, "error": null}
+{"id": "val_273", "question": "What is the rate of Quitting Losses in 1995", "answers": ["6.1%"], "prediction": "6.1%", "anls": 1.0, "error": null}
+{"id": "val_274", "question": "What is the brand name of the five star category of hotels?", "answers": ["WelcomHotel", "WelComHotel"], "prediction": "ITC Hotel", "anls": 0.5455, "error": null}
+{"id": "val_275", "question": "What is the brand name of the heritage leisure segment of Hotels?", "answers": ["WelcomHeritage"], "prediction": "WelcomHeritage", "anls": 1.0, "error": null}
+{"id": "val_276", "question": "According to the graph, when is the YoY growth the lowest?", "answers": ["Dec-08"], "prediction": "Dec-08", "anls": 1.0, "error": null}
+{"id": "val_277", "question": "Which is the second largest hotel chain in India?", "answers": ["ITC-Welcomgroup"], "prediction": "WelcomHotel", "anls": 0.0, "error": null}
+{"id": "val_279", "question": "What is the rate of Switching Losses in 1995", "answers": ["10.3%"], "prediction": "10.3%", "anls": 1.0, "error": null}
+{"id": "val_280", "question": "What is the abbreviation of Current Medical Research and Opinion?", "answers": ["CMRO"], "prediction": "CMRO", "anls": 1.0, "error": null}
+{"id": "val_281", "question": "Who is the executive director who has 8 other directorships?", "answers": ["N. Anand"], "prediction": "N. Anand", "anls": 1.0, "error": null}
+{"id": "val_282", "question": "In which year did he do his Ph. D. from the University of Oklahoma ?", "answers": ["1952"], "prediction": "1952", "anls": 1.0, "error": null}

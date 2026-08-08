@@ -15,14 +15,42 @@ and where the image-resolution knee sits.
 | Phase | State |
 |---|---|
 | 0 — Environment delta | **done** — see [`setup/VRAM_BUDGET.md`](setup/VRAM_BUDGET.md) |
-| 1 — Evaluation harness | not started |
+| 1 — Evaluation harness | **done** — see [`results/baselines.md`](results/baselines.md) |
 | 2 — Training data | not started |
 | 3 — Fine-tuning + ablations | not started |
 | 4 — Error analysis | not started |
 | 5 — Quantization, deploy, release | not started |
 
-No trained model exists yet. No accuracy number appears anywhere in this repo
-until the Phase 1 harness produces it.
+No trained model exists yet. Every number below came out of the Phase 1 harness.
+
+## Base-model baselines (no training)
+
+150 synthetic charts, Qwen3-VL-4B-Instruct in 4-bit at 448px, greedy decoding.
+Full table and caveats: [`results/baselines.md`](results/baselines.md).
+
+| arm | valid JSON | chart type | structural | **value@5%** | median APE |
+|---|---|---|---|---|---|
+| A. minimal prompt | 94.7% | 72.7% | 14.0% | **24.7%** | 28% |
+| B. engineered prompt | 96.0% | 88.7% | 28.0% | **23.9%** | 30% |
+| C. + constrained decoding | 96.0% | 88.7% | 28.0% | **23.9%** | 30% |
+
+Forgetting probe, base model: **ANLS 0.9237 / EM 0.86** on 200 DocVQA samples.
+That is the "before" number every headline run gets compared against.
+
+Three things the baselines already settled:
+
+- **Constrained decoding changed nothing** — arms B and C are byte-identical on
+  150/150 charts. Under greedy decoding the argmax was already
+  grammar-conformant, so none of the base model's JSON validity is attributable
+  to grammar enforcement. That is the Phase 3 B8 question, answered up front.
+- **Prompt engineering moved structure, not numbers.** A → B gained 16 points of
+  chart-type accuracy and 14 of structural match while value@5% went *down* 0.8.
+  Prompting is not the lever on the metric that matters.
+- **The residual 4% invalid JSON is two distinct bugs.** Four are plain
+  truncation at `max_new_tokens=1024` (they complete at ~1.2–1.4k). Two are
+  greedy degeneration — one scatter chart emitted the same point 90 times, one
+  unique point out of 90 — which no token budget fixes and which constrained
+  decoding **cannot** catch, because a repetition loop is grammatically legal.
 
 ## Hardware
 

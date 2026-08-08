@@ -1,0 +1,27 @@
+
+card: NVIDIA GeForce RTX 5070 Ti Laptop GPU  11.94 GiB
+torch 2.11.0+cu128
+default sdp backends: {'flash': True, 'mem_efficient': True, 'math': True, 'cudnn': True}
+
+--- sdpa, stock (enable_gqa -> math fallback) ---
+  sdp backends: {'flash': True, 'mem_efficient': True, 'math': True, 'cudnn': True}  force_repeat_kv=False
+
+  backward peak  16.26 GiB     14417 ms  <-- EXCEEDS VRAM
+
+--- sdpa + force repeat_kv ---
+  sdp backends: {'flash': True, 'mem_efficient': True, 'math': True, 'cudnn': True}  force_repeat_kv=True
+
+  backward peak  12.58 GiB      1189 ms  <-- EXCEEDS VRAM
+
+--- sdpa + force repeat_kv, cuDNN off ---
+  sdp backends: {'flash': True, 'mem_efficient': True, 'math': True, 'cudnn': False}  force_repeat_kv=True
+
+  backward peak  12.58 GiB      1168 ms  <-- EXCEEDS VRAM
+
+--- eager ---
+  sdp backends: {'flash': True, 'mem_efficient': True, 'math': True, 'cudnn': False}  force_repeat_kv=False
+
+  backward peak  17.09 GiB     11570 ms  <-- EXCEEDS VRAM
+
+wrote D:\GEN AI\language_slm\results\phase0_attention_backends_768px.json
+

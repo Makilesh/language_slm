@@ -49,6 +49,20 @@ This is a recorded decision, not a silent fallback: if a later phase needs the
 memory profile of flash-attn, the gap is documented here rather than assumed
 away.
 
+**The Windows torch build has no flash-attention SDPA backend either** — not
+just the separate `flash-attn` package. `torch.nn.functional.
+scaled_dot_product_attention` reports "Torch was not compiled with flash
+attention". Combined with Qwen3-VL's grouped-query attention this pushes SDPA
+onto the math backend, costing 3.7 GiB and 12× throughput. `setup/sdpa_compat.py`
+patches it; **import and call `force_repeat_kv()` before any training run.**
+Full measurements in `results/phase0_findings.md` §3.
+
+**Exceeding VRAM does not raise OOM on Windows.** WDDM spills to host RAM over
+PCIe, so an oversized config runs correctly and merely becomes 10–100× slower.
+Time every config; do not rely on catching an exception. When a real failure
+does arrive it is `torch.AcceleratorError`, not `torch.OutOfMemoryError`, and
+`empty_cache()` will raise too.
+
 **triton is unavailable on Windows.** Harmless — it only disables FLOP counting
 in `torch.utils.flop_counter` and any triton-backed fused kernels. Torch prints
 a warning at import; ignore it.

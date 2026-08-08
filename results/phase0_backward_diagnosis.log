@@ -1,0 +1,49 @@
+
+card: NVIDIA GeForce RTX 5070 Ti Laptop GPU  11.94 GiB
+probe: 768px long edge
+
+W0808 01:58:07.416000 34532 .venv\Lib\site-packages\torch\utils\flop_counter.py:29] triton not found; flop counting 
+will not work for triton kernels
+
+seq len 857, image tokens 360, vocab 151936
+resident weights+adapters: 2.97 GiB
+one full-sequence logits tensor: fp32 0.49 GiB, bf16 0.24 GiB
+
+  backward, full loss (baseline)                16.25 GiB     23798 ms
+  A. backward, loss on last token only          15.06 GiB     32638 ms
+  A. forward only, no labels                     3.41 GiB      6272 ms
+D:\GEN AI\language_slm\.venv\Lib\site-packages\transformers\integrations\sdpa_attention.py:154: UserWarning: Memory 
+efficient kernel not used because: (Triggered internally at 
+C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen\native\transformers\cuda\sdp_utils.cpp:986.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+D:\GEN AI\language_slm\.venv\Lib\site-packages\transformers\integrations\sdpa_attention.py:154: UserWarning: For dense 
+input, both fused kernels require query, key and value to have the same num_heads. Query.sizes(): [1, 32, 857, 128], 
+Key sizes(): [1, 8, 857, 128], Value sizes(): [1, 8, 857, 128] instead. To broadcast dense inputs, try using unsqueeze 
+and expand_to before passing them into the kernel. (Triggered internally at 
+C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen/native/transformers/sdp_utils_cpp.h:426.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+D:\GEN AI\language_slm\.venv\Lib\site-packages\transformers\integrations\sdpa_attention.py:154: UserWarning: Flash 
+attention kernel not used because: (Triggered internally at 
+C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen\native\transformers\cuda\sdp_utils.cpp:988.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+D:\GEN AI\language_slm\.venv\Lib\site-packages\transformers\integrations\sdpa_attention.py:154: UserWarning: Torch was 
+not compiled with flash attention. (Triggered internally at 
+C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen\native\transformers\cuda\sdp_utils.cpp:797.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+D:\GEN AI\language_slm\.venv\Lib\site-packages\transformers\integrations\sdpa_attention.py:154: UserWarning: cuDNN 
+attention kernel not used because: (Triggered internally at 
+C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen\native\transformers\cuda\sdp_utils.cpp:990.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+D:\GEN AI\language_slm\.venv\Lib\site-packages\transformers\integrations\sdpa_attention.py:154: UserWarning: cuDNN 
+attention has been runtime disabled. (Triggered internally at 
+C:\actions-runner\_work\pytorch\pytorch\pytorch\aten\src\ATen\native\transformers\cuda\sdp_utils.cpp:706.)
+  attn_output = torch.nn.functional.scaled_dot_product_attention(
+  B. backward, math backend disabled           FAILED: RuntimeError
+  B. backward, math backend forced             FAILED: OutOfMemoryError
+  C. backward, checkpointing OFF                16.26 GiB     18025 ms
+  C. backward, checkpointing ON                 16.26 GiB     21622 ms
+
+----------------------------------------------------------------------
+baseline peak 16.25 GiB, of which 2.97 GiB is resident weights => 13.28 GiB transient
+wrote D:\GEN AI\language_slm\results\phase0_backward_diagnosis_768px.json
+

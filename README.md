@@ -36,9 +36,32 @@ patch size 16 with a spatial merge of 2, so **one image token covers a 32×32
 pixel region** — image token count scales with the *area* of the input, and the
 processor's default `max_pixels` allows ~16k image tokens if you let it.
 
-Every config in this repo therefore states its resolution, expected image
-tokens, and max sequence length explicitly. The measured table lives in
-[`setup/VRAM_BUDGET.md`](setup/VRAM_BUDGET.md) and governs the rest of the work.
+Measured on an RTX 5070 Ti Laptop (11.94 GiB), Qwen3-VL-4B in 4-bit NF4, LoRA
+r=32 on the decoder, batch 1:
+
+| long edge | image tokens | seq len | fwd GiB | bwd GiB | bwd ms |
+|---|---|---|---|---|---|
+| **448** | **126** | 623 | 3.96 | **10.03** ✅ | **528** |
+| 768 | 360 | 857 | 4.34 | 12.59 ❌ | 9,933 |
+| 1280 | 960 | 1457 | 5.28 | 19.21 ❌ | 118,388 |
+
+**448px is the training operating point.** Forward-only fits at every
+resolution, so evaluation is unconstrained — only training is pinned.
+
+Two Phase 0 findings worth more than the table itself:
+
+1. **On Windows, exceeding VRAM does not raise OOM.** WDDM spills to host RAM,
+   so an oversized config runs correctly and merely gets 10–100× slower. Fit has
+   to be measured in milliseconds, not caught as an exception.
+2. **SDPA silently falls back to the math backend.** Qwen3-VL's grouped-query
+   attention (32 Q heads, 8 KV heads) plus a Windows torch build with no
+   flash-attention kernel means every attention call materialises a
+   `[32, seq, seq]` matrix per layer. Forcing transformers' `repeat_kv` branch
+   ([`setup/sdpa_compat.py`](setup/sdpa_compat.py)) recovers **3.7 GiB and 12×
+   throughput** and emits no error either way.
+
+Full write-up: [`results/phase0_findings.md`](results/phase0_findings.md).
+Mechanical table: [`setup/VRAM_BUDGET.md`](setup/VRAM_BUDGET.md).
 
 ## Reproducing Phase 0
 

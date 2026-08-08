@@ -1,0 +1,74 @@
+{
+  "card_gib": 11.94,
+  "torch": "2.11.0+cu128",
+  "rows": [
+    {
+      "name": "sdpa, stock (enable_gqa -> math fallback)",
+      "attn_impl": "sdpa",
+      "cudnn_sdp": true,
+      "force_repeat_kv": false,
+      "long_edge": 768,
+      "image_tokens": 360,
+      "seq_len": 857,
+      "backends": {
+        "flash": true,
+        "mem_efficient": true,
+        "math": true,
+        "cudnn": true
+      },
+      "peak_gib": 16.265,
+      "ms": 14417
+    },
+    {
+      "name": "sdpa + force repeat_kv",
+      "attn_impl": "sdpa",
+      "cudnn_sdp": true,
+      "force_repeat_kv": true,
+      "long_edge": 768,
+      "image_tokens": 360,
+      "seq_len": 857,
+      "backends": {
+        "flash": true,
+        "mem_efficient": true,
+        "math": true,
+        "cudnn": true
+      },
+      "peak_gib": 12.583,
+      "ms": 1189
+    },
+    {
+      "name": "sdpa + force repeat_kv, cuDNN off",
+      "attn_impl": "sdpa",
+      "cudnn_sdp": false,
+      "force_repeat_kv": true,
+      "long_edge": 768,
+      "image_tokens": 360,
+      "seq_len": 857,
+      "backends": {
+        "flash": true,
+        "mem_efficient": true,
+        "math": true,
+        "cudnn": false
+      },
+      "peak_gib": 12.583,
+      "ms": 1168
+    },
+    {
+      "name": "eager",
+      "attn_impl": "eager",
+      "cudnn_sdp": false,
+      "force_repeat_kv": false,
+      "long_edge": 768,
+      "image_tokens": 360,
+      "seq_len": 857,
+      "backends": {
+        "flash": true,
+        "mem_efficient": true,
+        "math": true,
+        "cudnn": false
+      },
+      "peak_gib": 17.087,
+      "ms": 11570
+    }
+  ]
+}

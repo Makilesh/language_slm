@@ -47,10 +47,35 @@ def backend_flags() -> dict:
     }
 
 
-def trial(name: str, attn_impl: str, image, enable_cudnn: bool, long_edge: int) -> dict:
+def force_repeat_kv(enabled: bool) -> None:
+    """Make transformers expand GQA K/V heads instead of passing enable_gqa=True.
+
+    transformers takes the `enable_gqa=True` path whenever attention_mask is
+    None (sdpa_attention.py::use_gqa_in_sdpa). The Windows torch build's fused
+    kernels reject that -- "both fused kernels require query, key and value to
+    have the same num_heads" -- and silently drop to the math backend, which
+    materialises a [heads, seq, seq] matrix per layer. Forcing the repeat_kv
+    branch costs a K/V broadcast but keeps the memory-efficient kernel usable.
+    """
+    from transformers.integrations import sdpa_attention as sa
+
+    if not hasattr(sa, "_orig_use_gqa_in_sdpa"):
+        sa._orig_use_gqa_in_sdpa = sa.use_gqa_in_sdpa
+    sa.use_gqa_in_sdpa = (lambda *a, **k: False) if enabled else sa._orig_use_gqa_in_sdpa
+
+
+def trial(
+    name: str,
+    attn_impl: str,
+    image,
+    enable_cudnn: bool,
+    long_edge: int,
+    repeat_kv: bool = False,
+) -> dict:
     print(f"\n--- {name} ---")
     torch.backends.cuda.enable_cudnn_sdp(enable_cudnn)
-    print(f"  sdp backends: {backend_flags()}")
+    force_repeat_kv(repeat_kv)
+    print(f"  sdp backends: {backend_flags()}  force_repeat_kv={repeat_kv}")
 
     model, processor = load_model(attn_impl, quantize_vision=False)
     model = attach_lora(model, 32, 64, use_prepare=False)
@@ -64,6 +89,7 @@ def trial(name: str, attn_impl: str, image, enable_cudnn: bool, long_edge: int) 
         "name": name,
         "attn_impl": attn_impl,
         "cudnn_sdp": enable_cudnn,
+        "force_repeat_kv": repeat_kv,
         "long_edge": long_edge,
         "image_tokens": image_tokens,
         "seq_len": int(inputs["input_ids"].shape[1]),
@@ -116,8 +142,10 @@ def main() -> None:
     image = resize_long_edge(source, args.long_edge)
 
     rows = [
-        trial("sdpa, cuDNN off (current default)", "sdpa", image, False, args.long_edge),
-        trial("sdpa, cuDNN on", "sdpa", image, True, args.long_edge),
+        trial("sdpa, stock (enable_gqa -> math fallback)", "sdpa", image, True, args.long_edge),
+        trial("sdpa + force repeat_kv", "sdpa", image, True, args.long_edge, repeat_kv=True),
+        trial("sdpa + force repeat_kv, cuDNN off", "sdpa", image, False, args.long_edge,
+              repeat_kv=True),
         trial("eager", "eager", image, False, args.long_edge),
     ]
 

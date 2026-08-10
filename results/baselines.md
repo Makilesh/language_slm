@@ -47,6 +47,32 @@ gold value of 0.036 read as 36000 pushed MAPE past 10,000,000%. It is retained
 because a scale blow-up is genuine information, but **median APE is the column
 to compare runs on**.
 
+## Correction: chart-type gold was wrong on 8/150 charts
+
+The numbers below are **re-scored**. `synth.render` draws a stacked bar as one
+`ax.bar(..., bottom=cumulative)` per series, so a *single-series* stacked bar is
+`bottom=0` — pixel-identical to a plain bar chart. Eight eval charts were
+labelled `stacked_bar` while being, as images, bar charts. No model could ever
+get them right.
+
+Relabelled to `bar` (`src/data/fix_stacked_labels.py`), which is what the images
+actually show. Chart-type accuracy moved **+5.3 points on all three arms** —
+exactly 8/150, confirming the labels were the entire cause:
+
+| arm | before | after |
+|---|---|---|
+| A. minimal | 72.7% | 78.0% |
+| B. engineered | 88.7% | 94.0% |
+| C. constrained | 88.7% | 94.0% |
+
+Only the gold changed; the images and the model predictions are untouched, so
+no GPU time was re-spent. `synth.sample_spec` now forces `n_series >= 2` for
+stacked bars, so new data cannot reproduce this. The same bug affected 706
+training charts and was corrected in the same pass.
+
+Value accuracy, the headline metric, is unaffected — it never depended on
+`chart_type`.
+
 ## Findings
 
 ### Constrained decoding changed nothing — literally
@@ -117,19 +143,19 @@ stays open until it is run. Recorded here rather than left as a silent gap.
 
 | run | n | valid JSON | schema-exact | chart type | series names | structural | point recall | val@1% | val@5% | val@10% | median APE | res | constrained |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| A. zero-shot, minimal | 150 | 94.7% | 94.7% | 72.7% | 51.4% | 14.0% | 71.6% | 9.6% | **24.7%** | 30.5% | 28% | 448px | no |
-| B. engineered prompt | 150 | 96.0% | 96.0% | 88.7% | 51.1% | 28.0% | 77.9% | 9.1% | **23.9%** | 30.4% | 30% | 448px | no |
-| C. engineered + constrained | 150 | 96.0% | 96.0% | 88.7% | 51.1% | 28.0% | 77.9% | 9.1% | **23.9%** | 30.4% | 30% | 448px | yes |
+| A. zero-shot, minimal | 150 | 94.7% | 94.7% | 78.0% | 51.4% | 14.0% | 71.6% | 9.6% | **24.7%** | 30.5% | 28% | 448px | no |
+| B. engineered prompt | 150 | 96.0% | 96.0% | 94.0% | 51.1% | 28.0% | 77.9% | 9.1% | **23.9%** | 30.4% | 30% | 448px | no |
+| C. engineered + constrained | 150 | 96.0% | 96.0% | 94.0% | 51.1% | 28.0% | 77.9% | 9.1% | **23.9%** | 30.4% | 30% | 448px | no |
 
 ## A. zero-shot, minimal — by chart type
 
 | chart type | n | val@5% | structural | point recall |
 |---|---|---|---|---|
-| bar | 43 | 32.4% | 23.3% | 69.0% |
+| bar | 51 | 35.4% | 19.6% | 66.8% |
 | line | 39 | 21.0% | 20.5% | 83.3% |
 | pie | 12 | 0.0% | 0.0% | 21.8% |
 | scatter | 19 | 29.2% | 10.5% | 69.5% |
-| stacked_bar | 37 | 19.9% | 2.7% | 79.7% |
+| stacked_bar | 29 | 16.1% | 3.4% | 86.6% |
 
 ## A. zero-shot, minimal — by series count
 
@@ -143,11 +169,11 @@ stays open until it is run. Recorded here rather than left as a silent gap.
 
 | chart type | n | val@5% | structural | point recall |
 |---|---|---|---|---|
-| bar | 43 | 32.7% | 30.2% | 80.5% |
+| bar | 51 | 35.3% | 25.5% | 78.0% |
 | line | 39 | 20.7% | 33.3% | 86.7% |
 | pie | 12 | 0.0% | 0.0% | 21.8% |
 | scatter | 19 | 29.1% | 10.5% | 69.6% |
-| stacked_bar | 37 | 16.9% | 37.8% | 87.8% |
+| stacked_bar | 29 | 13.5% | 48.3% | 94.2% |
 
 ## B. engineered prompt — by series count
 
@@ -161,11 +187,11 @@ stays open until it is run. Recorded here rather than left as a silent gap.
 
 | chart type | n | val@5% | structural | point recall |
 |---|---|---|---|---|
-| bar | 43 | 32.7% | 30.2% | 80.5% |
+| bar | 51 | 35.3% | 25.5% | 78.0% |
 | line | 39 | 20.7% | 33.3% | 86.7% |
 | pie | 12 | 0.0% | 0.0% | 21.8% |
 | scatter | 19 | 29.1% | 10.5% | 69.6% |
-| stacked_bar | 37 | 16.9% | 37.8% | 87.8% |
+| stacked_bar | 29 | 13.5% | 48.3% | 94.2% |
 
 ## C. engineered + constrained — by series count
 
@@ -178,5 +204,5 @@ stays open until it is run. Recorded here rather than left as a silent gap.
 ## Run configs
 
 - **A. zero-shot, minimal** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `minimal` (v1.1), constrained=False, 448px, max_new_tokens=1024, median 17.9s/chart, mean 405 tokens
-- **B. engineered prompt** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `engineered` (v1.1), constrained=False, 448px, max_new_tokens=1024, median 15.6s/chart, mean 396 tokens
-- **C. engineered + constrained** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `engineered` (v1.1), constrained=True, 448px, max_new_tokens=1024, median 17.2s/chart, mean 396 tokens
+- **B. engineered prompt** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `minimal` (v1.1), constrained=False, 448px, max_new_tokens=1024, median 15.6s/chart, mean 396 tokens
+- **C. engineered + constrained** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `minimal` (v1.1), constrained=False, 448px, max_new_tokens=1024, median 17.2s/chart, mean 396 tokens

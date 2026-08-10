@@ -266,13 +266,28 @@ def score(manifest: Path, preds_path: Path, report: Path | None, config: dict) -
         )
 
     agg = aggregate(samples)
+    keys = {"model", "dtype", "adapter", "prompt", "constrained", "long_edge",
+            "max_new_tokens", "attn", "manifest", "out"}
     agg["config"] = {
-        k: (str(v) if isinstance(v, Path) else v)
-        for k, v in config.items()
-        if k in {"model", "dtype", "adapter", "prompt", "constrained", "long_edge",
-                 "max_new_tokens", "attn", "manifest", "out"}
+        k: (str(v) if isinstance(v, Path) else v) for k, v in config.items() if k in keys
     }
     agg["config"]["prompt_version"] = PROMPT_VERSION
+
+    # `--score-only` re-scores existing predictions, so its argv describes the
+    # *scoring* run, not the generation that produced them. Writing it verbatim
+    # silently rewrote `constrained: true` to false on a re-score, mislabelling
+    # how the predictions were made. Generation settings are carried over from
+    # the previous report instead; only scoring-time fields may change.
+    if config.get("score_only") and report and Path(report).exists():
+        try:
+            prev = json.loads(Path(report).read_text(encoding="utf-8")).get("config", {})
+        except (OSError, json.JSONDecodeError):
+            prev = {}
+        generation_keys = keys - {"manifest", "out"}
+        for k in generation_keys:
+            if k in prev:
+                agg["config"][k] = prev[k]
+        agg["config"]["rescored"] = True
     agg["timing"] = {
         "median_seconds": sorted(r["seconds"] for r in preds.values())[len(preds) // 2]
         if preds else None,

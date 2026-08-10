@@ -268,7 +268,7 @@
     "model": "Qwen/Qwen3-VL-4B-Instruct",
     "adapter": null,
     "dtype": "4bit",
-    "prompt": "minimal",
+    "prompt": "engineered",
     "constrained": false,
     "long_edge": 448,
     "max_new_tokens": 1024,

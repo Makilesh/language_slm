@@ -228,6 +228,16 @@ def sample_spec(rng: random.Random, hard_rate: float = 0.35) -> ChartSpec:
 
     names_pool = rng.choice(SERIES_NAMES)
     n_series = min(n_series, len(names_pool))
+
+    # A stacked bar with one series renders as a plain bar chart -- the render
+    # branch draws a single ax.bar() with bottom=0, pixel-identical to the
+    # "bar" branch. Labelling that image "stacked_bar" is unlearnable ground
+    # truth: it teaches the model that the distinction is random, and caps
+    # chart-type accuracy on that population at chance. Stacking needs
+    # something to stack.
+    if chart_type == "stacked_bar":
+        n_series = max(2, n_series)
+
     series_names = (
         [PIE_SERIES_NAME] if chart_type == "pie" else names_pool[:n_series]
     )

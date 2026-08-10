@@ -45,6 +45,32 @@ gold value of 0.036 read as 36000 pushed MAPE past 10,000,000%. It is retained
 because a scale blow-up is genuine information, but **median APE is the column
 to compare runs on**.
 
+## Correction: chart-type gold was wrong on 8/150 charts
+
+The numbers below are **re-scored**. `synth.render` draws a stacked bar as one
+`ax.bar(..., bottom=cumulative)` per series, so a *single-series* stacked bar is
+`bottom=0` — pixel-identical to a plain bar chart. Eight eval charts were
+labelled `stacked_bar` while being, as images, bar charts. No model could ever
+get them right.
+
+Relabelled to `bar` (`src/data/fix_stacked_labels.py`), which is what the images
+actually show. Chart-type accuracy moved **+5.3 points on all three arms** —
+exactly 8/150, confirming the labels were the entire cause:
+
+| arm | before | after |
+|---|---|---|
+| A. minimal | 72.7% | 78.0% |
+| B. engineered | 88.7% | 94.0% |
+| C. constrained | 88.7% | 94.0% |
+
+Only the gold changed; the images and the model predictions are untouched, so
+no GPU time was re-spent. `synth.sample_spec` now forces `n_series >= 2` for
+stacked bars, so new data cannot reproduce this. The same bug affected 706
+training charts and was corrected in the same pass.
+
+Value accuracy, the headline metric, is unaffected — it never depended on
+`chart_type`.
+
 ## Findings
 
 ### Constrained decoding changed nothing — literally

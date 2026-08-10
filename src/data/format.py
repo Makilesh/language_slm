@@ -171,11 +171,16 @@ def stats(samples: list[dict]) -> dict[str, Any]:
     from collections import Counter
 
     by_source = Counter(s["source"] for s in samples)
+
+    # Real charts legitimately carry chart_type=None -- that corpus does not
+    # annotate it and `real.py` refuses to guess. Normalise to a string so the
+    # distribution is sortable and so "unannotated" stays visible as its own
+    # bucket rather than being silently folded into "bar".
     by_type = Counter(
-        (s.get("properties") or {}).get("chart_type", "unknown") for s in samples
+        str((s.get("properties") or {}).get("chart_type") or "unannotated") for s in samples
     )
     by_series = Counter(
-        (s.get("properties") or {}).get("n_series", "unknown") for s in samples
+        str((s.get("properties") or {}).get("n_series", "unknown")) for s in samples
     )
     degraded = sum(1 for s in samples if s["degradations"])
     deg_kinds = Counter(d for s in samples for d in s["degradations"])
@@ -185,7 +190,9 @@ def stats(samples: list[dict]) -> dict[str, Any]:
         "by_source": dict(by_source),
         "synthetic_fraction": by_source.get("synth", 0) / max(1, len(samples)),
         "by_chart_type": dict(sorted(by_type.items())),
-        "by_series_count": dict(sorted(by_series.items(), key=lambda kv: str(kv[0]))),
+        "by_series_count": dict(
+            sorted(by_series.items(), key=lambda kv: (not kv[0].isdigit(), kv[0].zfill(3)))
+        ),
         "n_degraded": degraded,
         "degraded_fraction": degraded / max(1, len(samples)),
         "degradation_kinds": dict(deg_kinds.most_common()),

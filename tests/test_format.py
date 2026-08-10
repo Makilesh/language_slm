@@ -135,6 +135,29 @@ def test_stats_on_empty_input_does_not_divide_by_zero():
     assert st["n"] == 0 and st["synthetic_fraction"] == 0
 
 
+def test_stats_handle_unannotated_chart_type():
+    """Real charts carry chart_type=None; mixing them with synth must not crash.
+
+    `sorted()` cannot compare None to str, and folding None into "bar" would
+    invent ground truth the corpus does not have.
+    """
+    samples = [
+        build_sample(row(source="real", properties={"chart_type": None, "n_series": 2}), "engineered"),
+        build_sample(row(source="synth", properties={"chart_type": "bar", "n_series": 1}), "engineered"),
+    ]
+    st = stats(samples)
+    assert st["by_chart_type"] == {"bar": 1, "unannotated": 1}
+
+
+def test_series_counts_sort_numerically():
+    """String sorting would order 10 before 2 and make the table unreadable."""
+    samples = [
+        build_sample(row(properties={"chart_type": "bar", "n_series": n}), "engineered")
+        for n in (10, 2, 1)
+    ]
+    assert list(stats(samples)["by_series_count"]) == ["1", "2", "10"]
+
+
 # --------------------------------------------------------------------------- #
 # the real check -- needs the processor
 # --------------------------------------------------------------------------- #

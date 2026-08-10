@@ -194,6 +194,53 @@ def token_stats(rows: list[dict], long_edge: int, tokenizer=None) -> dict:
 # --------------------------------------------------------------------------- #
 
 
+def eval_signatures(eval_manifests: list[Path]) -> tuple[set[str], set[str], set[str]]:
+    """(exact gold, near gold, image byte) hashes for every eval sample."""
+    exact, near, imgs = set(), set(), set()
+    for man in eval_manifests:
+        base = Path(man).parent
+        for line in Path(man).open(encoding="utf-8"):
+            if not line.strip():
+                continue
+            r = json.loads(line)
+            exact.add(gold_signature(r["gold"], sig=4))
+            near.add(gold_signature(r["gold"], sig=2))
+            h = image_hash(base / r["image"])
+            if h:
+                imgs.add(h)
+    return exact, near, imgs
+
+
+def filter_contaminated(
+    rows: list[dict], exact: set[str], near: set[str], imgs: set[str]
+) -> tuple[list[dict], dict]:
+    """Drop rows overlapping the eval set, before mixing rather than after.
+
+    Filtering the *pools* keeps the requested count and mix ratio intact;
+    filtering the selection would silently shrink the dataset and skew the
+    ratio by however many rows happened to be contaminated.
+
+    Id-based exclusion upstream (`real.py --exclude-manifest`) is not
+    sufficient on its own: the real corpus stores some charts twice under
+    consecutive sample ids, so the same chart reaches both splits with two
+    different ids. Only a content hash catches that.
+    """
+    kept, dropped = [], {"image_bytes": 0, "exact_gold": 0, "near_duplicate": 0}
+    for row in rows:
+        h = image_hash(Path(row["_manifest_dir"]) / row["image"])
+        if h and h in imgs:
+            dropped["image_bytes"] += 1
+            continue
+        if gold_signature(row["gold"], sig=4) in exact:
+            dropped["exact_gold"] += 1
+            continue
+        if gold_signature(row["gold"], sig=2) in near:
+            dropped["near_duplicate"] += 1
+            continue
+        kept.append(row)
+    return kept, dropped
+
+
 def load_manifest(path: Path, source: str) -> list[dict]:
     path = Path(path)
     rows = []
@@ -243,23 +290,44 @@ def build(args) -> None:
     real = load_manifest(args.real, "real") if args.real else []
     print(f"available: {len(synth)} synthetic, {len(real)} real")
 
+    eval_paths = [Path(p) for p in args.eval_manifest]
+    print("\npre-filtering candidate pools against the eval set...")
+    exact, near, imgs = eval_signatures(eval_paths)
+    print(f"  eval signatures: {len(exact)} gold, {len(imgs)} images")
+
+    synth, dropped_s = filter_contaminated(synth, exact, near, imgs)
+    real, dropped_r = filter_contaminated(real, exact, near, imgs)
+    for label, d in (("synthetic", dropped_s), ("real", dropped_r)):
+        total = sum(d.values())
+        print(f"  {label:10s} dropped {total}" + (f"  {d}" if total else ""))
+    prefilter_dropped = {
+        "synthetic": dropped_s,
+        "real": dropped_r,
+        "total": sum(dropped_s.values()) + sum(dropped_r.values()),
+    }
+    print(f"  clean pools: {len(synth)} synthetic, {len(real)} real")
+
     n = args.n or (len(synth) + len(real))
     rows = mix(synth, real, args.synth_ratio, n, rng)
-    print(f"selected: {len(rows)} rows at synth_ratio={args.synth_ratio}")
+    print(f"\nselected: {len(rows)} rows at synth_ratio={args.synth_ratio}")
 
-    print("\ncontamination check...")
-    contam = contamination_report(rows, [Path(p) for p in args.eval_manifest])
+    # Re-run the full check on the actual selection. After pre-filtering this
+    # must come back clean; if it does not, the filter and the report disagree
+    # and the dataset is not trustworthy.
+    print("\nverifying selection...")
+    contam = contamination_report(rows, eval_paths)
+    contam["prefilter_dropped"] = prefilter_dropped
     for k, v in contam["hits"].items():
         print(f"  {k:16s} {v}")
     print(f"  internal dup rows {contam['internal_duplicate_rows']}")
 
     if contam["total_contaminated"] and not args.allow_contamination:
-        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.report).parent.mkdir(parents=True, exist_ok=True)
         Path(args.report).write_text(json.dumps(contam, indent=2), encoding="utf-8")
         raise SystemExit(
-            f"\nABORT: {contam['total_contaminated']} training rows overlap the eval set.\n"
-            f"Details in {args.report}. Re-run the generator with a different seed, or\n"
-            f"pass --allow-contamination if the overlap is understood and intended."
+            f"\nABORT: {contam['total_contaminated']} rows survived pre-filtering.\n"
+            f"That is a bug in the filter, not a data problem -- both use the same\n"
+            f"signatures, so they cannot legitimately disagree. Details in {args.report}."
         )
 
     print("\ntoken budget...")

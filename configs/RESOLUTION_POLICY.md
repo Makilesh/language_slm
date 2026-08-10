@@ -60,20 +60,30 @@ Two consequences worth planning around:
 
 ## Sequence budget
 
-At 448 px, with the engineered prompt:
+**`max_seq_len: 2048`.** Measured over the assembled 10k corpus
+(`results/dataset_stats.json`), not estimated:
 
-| component | tokens |
-|---|---|
-| image | 126 |
-| instruction (engineered prompt) | ~290 |
-| chat template scaffolding | ~30 |
-| target JSON | median ~215, p99 ~700 |
+| component | p50 | p90 | p99 | max |
+|---|---|---|---|---|
+| image tokens @448px | 112 | 168 | 196 | 196 |
+| target JSON | 162 | 375 | 757 | 1,405 |
+| prompt + template (engineered, fixed) | 327 | 327 | 327 | 327 |
+| **total sequence** | **601** | **870** | **1,280** | **1,928** |
 
-`max_seq_len: 1024` covers the corpus comfortably; the p99 target sits well
-inside it. Note this is the *training* budget — Phase 1 separately found that
-`max_new_tokens=1024` at **inference** truncates 6/150 dense charts, and should
-be raised to 2048 there. The two numbers are unrelated and it is easy to
-conflate them.
+An earlier draft of this file put `max_seq_len` at 1024 on an estimate of ~215
+median / ~700 p99 target tokens. The measured p99 is 757 and the max is 1,405,
+so 1024 would have silently truncated the tail — and truncating a target
+teaches the model to stop mid-JSON, which is the exact degenerate behaviour
+Phase 1 already found at inference. 2048 clears the measured max with headroom.
+
+Note the image is only ~19% of the median sequence at this resolution. The
+target JSON, not the image, is what the budget is mostly spent on — which is
+why compact JSON separators in `format.py` are a real saving rather than a
+micro-optimisation.
+
+Do not conflate this with inference `max_new_tokens`, which Phase 1 found
+should also be 2048 (6/150 dense charts truncate at 1024). Same number,
+unrelated reasons.
 
 ## Revisit conditions
 

@@ -1,0 +1,169 @@
+==============================================================================
+SAMPLE 1  id=trsynth_05125  source=synth  degradations=['border', 'blur', 'jpeg']
+image: data\train\synth_deg\images\trsynth_05125_deg.png
+==============================================================================
+
+--- MASKED (labels = -100) ---
+<|im_start|>user
+<|vision_start|><|image_pad|><|vision_end|>You are a precise chart data extractor. Read the chart image and output the underlying data as a single JSON object. Output JSON only — no prose, no markdown fences, no explanation.
+
+Schema:
+{
+  "chart_type": one of "bar", "line", "pie", "scatter", "stacked_bar",
+  "title": the chart title as written, or null if absent,
+  "x_label": the x-axis label as written, or null if absent,
+  "y_label": the y-axis label as written, or null if absent,
+  "series": [ { "name": series name from the legend, "data": [ {"x": ..., "y": number}, ... ] } ]
+}
+
+Rules:
+- Include every series in the legend, and every point in each series.
+- "x" is the category label as written on the axis (a string), or the numeric x value for scatter plots.
+- "y" is always a number. Read it against the y-axis gridlines and tick values.
+- Report values in the units shown on the axis. If the axis says "thousands", report 45 for a bar at 45, not 45000.
+- For stacked bars, report each segment's own value, not the cumulative height.
+- If the y-axis is logarithmic, read the value from the log scale.
+- For a chart with one unlabelled series, use a short descriptive name.
+- Do not invent points that are not plotted, and do not omit plotted points.
+<|im_end|>
+<|im_start|>assistant
+
+--- TRAINED ON (labels = token ids) ---
+{"chart_type":"stacked_bar","title":"Market Share by Vendor","x_label":"Quarter","y_label":"Population","series":[{"name":"Mobile","data":[{"x":"2018","y":13200.0},{"x":"2019","y":24400.0},{"x":"2020","y":15400.0},{"x":"2021","y":15600.0},{"x":"2022","y":18000.0},{"x":"2023","y":14700.0},{"x":"2024","y":15100.0}]}]}<|im_end|>
+
+
+==============================================================================
+SAMPLE 2  id=real_29043  source=real  degradations=[]
+image: data\train\real\images\real_29043.png
+==============================================================================
+
+--- MASKED (labels = -100) ---
+<|im_start|>user
+<|vision_start|><|image_pad|><|vision_end|>You are a precise chart data extractor. Read the chart image and output the underlying data as a single JSON object. Output JSON only — no prose, no markdown fences, no explanation.
+
+Schema:
+{
+  "chart_type": one of "bar", "line", "pie", "scatter", "stacked_bar",
+  "title": the chart title as written, or null if absent,
+  "x_label": the x-axis label as written, or null if absent,
+  "y_label": the y-axis label as written, or null if absent,
+  "series": [ { "name": series name from the legend, "data": [ {"x": ..., "y": number}, ... ] } ]
+}
+
+Rules:
+- Include every series in the legend, and every point in each series.
+- "x" is the category label as written on the axis (a string), or the numeric x value for scatter plots.
+- "y" is always a number. Read it against the y-axis gridlines and tick values.
+- Report values in the units shown on the axis. If the axis says "thousands", report 45 for a bar at 45, not 45000.
+- For stacked bars, report each segment's own value, not the cumulative height.
+- If the y-axis is logarithmic, read the value from the log scale.
+- For a chart with one unlabelled series, use a short descriptive name.
+- Do not invent points that are not plotted, and do not omit plotted points.
+<|im_end|>
+<|im_start|>assistant
+
+--- TRAINED ON (labels = token ids) ---
+{"chart_type":"bar","title":null,"x_label":null,"y_label":null,"series":[{"name":"Value","data":[{"x":"Nicaragua","y":105.0},{"x":"South Africa","y":479.0},{"x":"Iran","y":489.0}]}]}<|im_end|>
+
+
+==============================================================================
+SAMPLE 3  id=trsynth_05180  source=synth  degradations=[]
+image: data\train\synth_deg\..\synth\images\trsynth_05180.png
+==============================================================================
+
+--- MASKED (labels = -100) ---
+<|im_start|>user
+<|vision_start|><|image_pad|><|vision_end|>You are a precise chart data extractor. Read the chart image and output the underlying data as a single JSON object. Output JSON only — no prose, no markdown fences, no explanation.
+
+Schema:
+{
+  "chart_type": one of "bar", "line", "pie", "scatter", "stacked_bar",
+  "title": the chart title as written, or null if absent,
+  "x_label": the x-axis label as written, or null if absent,
+  "y_label": the y-axis label as written, or null if absent,
+  "series": [ { "name": series name from the legend, "data": [ {"x": ..., "y": number}, ... ] } ]
+}
+
+Rules:
+- Include every series in the legend, and every point in each series.
+- "x" is the category label as written on the axis (a string), or the numeric x value for scatter plots.
+- "y" is always a number. Read it against the y-axis gridlines and tick values.
+- Report values in the units shown on the axis. If the axis says "thousands", report 45 for a bar at 45, not 45000.
+- For stacked bars, report each segment's own value, not the cumulative height.
+- If the y-axis is logarithmic, read the value from the log scale.
+- For a chart with one unlabelled series, use a short descriptive name.
+- Do not invent points that are not plotted, and do not omit plotted points.
+<|im_end|>
+<|im_start|>assistant
+
+--- TRAINED ON (labels = token ids) ---
+{"chart_type":"stacked_bar","title":"Unit Sales by Product Line","x_label":"Product","y_label":"Volume (kt)","series":[{"name":"2021","data":[{"x":"Site 1","y":42800.0},{"x":"Site 2","y":37700.0},{"x":"Site 3","y":26400.0},{"x":"Site 4","y":33100.0},{"x":"Site 5","y":18700.0},{"x":"Site 6","y":12100.0},{"x":"Site 7","y":47100.0},{"x":"Site 8","y":40700.0},{"x":"Site 9","y":36700.0},{"x":"Site 10","y":27300.0},{"x":"Site 11","y":20700.0}]},{"name":"2022","data":[{"x":"Site 1","y":59800.0},{"x":"Site 2","y":47300.0},{"x":"Site 3","y":51700.0},{"x":"Site 4","y":49300.0},{"x":"Site 5","y":17400.0},{"x":"Site 6","y":32000.0},{"x":"Site 7","y":27500.0},{"x":"Site 8","y":59600.0},{"x":"Site 9","y":60500.0},{"x":"Site 10","y":49600.0},{"x":"Site 11","y":21400.0}]},{"name":"2023","data":[{"x":"Site 1","y":12000.0},{"x":"Site 2","y":17100.0},{"x":"Site 3","y":30500.0},{"x":"Site 4","y":18200.0},{"x":"Site 5","y":36200.0},{"x":"Site 6","y":17200.0},{"x":"Site 7","y":35800.0},{"x":"Site 8","y":31200.0},{"x":"Site 9","y":33700.0},{"x":"Site 10","y":43900.0},{"x":"Site 11","y":34300.0}]}]}<|im_end|>
+
+
+==============================================================================
+SAMPLE 4  id=real_34987  source=real  degradations=[]
+image: data\train\real\images\real_34987.png
+==============================================================================
+
+--- MASKED (labels = -100) ---
+<|im_start|>user
+<|vision_start|><|image_pad|><|vision_end|>You are a precise chart data extractor. Read the chart image and output the underlying data as a single JSON object. Output JSON only — no prose, no markdown fences, no explanation.
+
+Schema:
+{
+  "chart_type": one of "bar", "line", "pie", "scatter", "stacked_bar",
+  "title": the chart title as written, or null if absent,
+  "x_label": the x-axis label as written, or null if absent,
+  "y_label": the y-axis label as written, or null if absent,
+  "series": [ { "name": series name from the legend, "data": [ {"x": ..., "y": number}, ... ] } ]
+}
+
+Rules:
+- Include every series in the legend, and every point in each series.
+- "x" is the category label as written on the axis (a string), or the numeric x value for scatter plots.
+- "y" is always a number. Read it against the y-axis gridlines and tick values.
+- Report values in the units shown on the axis. If the axis says "thousands", report 45 for a bar at 45, not 45000.
+- For stacked bars, report each segment's own value, not the cumulative height.
+- If the y-axis is logarithmic, read the value from the log scale.
+- For a chart with one unlabelled series, use a short descriptive name.
+- Do not invent points that are not plotted, and do not omit plotted points.
+<|im_end|>
+<|im_start|>assistant
+
+--- TRAINED ON (labels = token ids) ---
+{"chart_type":"bar","title":null,"x_label":null,"y_label":null,"series":[{"name":"Value","data":[{"x":"Russia","y":3.0},{"x":"Ethiopia","y":3.2}]}]}<|im_end|>
+
+
+==============================================================================
+SAMPLE 5  id=trsynth_02927  source=synth  degradations=[]
+image: data\train\synth_deg\..\synth\images\trsynth_02927.png
+==============================================================================
+
+--- MASKED (labels = -100) ---
+<|im_start|>user
+<|vision_start|><|image_pad|><|vision_end|>You are a precise chart data extractor. Read the chart image and output the underlying data as a single JSON object. Output JSON only — no prose, no markdown fences, no explanation.
+
+Schema:
+{
+  "chart_type": one of "bar", "line", "pie", "scatter", "stacked_bar",
+  "title": the chart title as written, or null if absent,
+  "x_label": the x-axis label as written, or null if absent,
+  "y_label": the y-axis label as written, or null if absent,
+  "series": [ { "name": series name from the legend, "data": [ {"x": ..., "y": number}, ... ] } ]
+}
+
+Rules:
+- Include every series in the legend, and every point in each series.
+- "x" is the category label as written on the axis (a string), or the numeric x value for scatter plots.
+- "y" is always a number. Read it against the y-axis gridlines and tick values.
+- Report values in the units shown on the axis. If the axis says "thousands", report 45 for a bar at 45, not 45000.
+- For stacked bars, report each segment's own value, not the cumulative height.
+- If the y-axis is logarithmic, read the value from the log scale.
+- For a chart with one unlabelled series, use a short descriptive name.
+- Do not invent points that are not plotted, and do not omit plotted points.
+<|im_end|>
+<|im_start|>assistant
+
+--- TRAINED ON (labels = token ids) ---
+{"chart_type":"stacked_bar","title":null,"x_label":"Product","y_label":"Spending (EUR)","series":[{"name":"North America","data":[{"x":"North","y":765000.0},{"x":"South","y":2350000.0},{"x":"East","y":1130000.0},{"x":"West","y":945000.0},{"x":"Central","y":1690000.0}]}]}<|im_end|>
+

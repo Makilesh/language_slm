@@ -1,0 +1,101 @@
+{
+  "config": {
+    "synth_manifest": "data\\train\\synth_deg\\trsynth.jsonl",
+    "real_manifest": "data\\train\\real\\real.jsonl",
+    "n_requested": 10000,
+    "synth_ratio": 0.7,
+    "seed": 3000,
+    "prompt": "engineered",
+    "long_edge": 448
+  },
+  "stats": {
+    "n": 10000,
+    "by_source": {
+      "real": 3000,
+      "synth": 7000
+    },
+    "synthetic_fraction": 0.7,
+    "by_chart_type": {
+      "bar": 2202,
+      "line": 1797,
+      "pie": 887,
+      "scatter": 897,
+      "stacked_bar": 1217,
+      "unannotated": 3000
+    },
+    "by_series_count": {
+      "1": 4876,
+      "2": 2235,
+      "3": 2327,
+      "4": 378,
+      "5": 184
+    },
+    "n_degraded": 1382,
+    "degraded_fraction": 0.1382,
+    "degradation_kinds": {
+      "jpeg": 967,
+      "rescale": 604,
+      "border": 566,
+      "blur": 521,
+      "rotate": 464,
+      "photometric": 447
+    }
+  },
+  "tokens": {
+    "long_edge": 448,
+    "image_tokens": {
+      "min": 56,
+      "p50": 112,
+      "p90": 168,
+      "p99": 196,
+      "max": 196,
+      "mean": 125.4
+    },
+    "target_tokens": {
+      "min": 45,
+      "p50": 162,
+      "p90": 375,
+      "p99": 757,
+      "max": 1405,
+      "mean": 201.3
+    },
+    "image_plus_target": {
+      "min": 137,
+      "p50": 292,
+      "p90": 500,
+      "p99": 893,
+      "max": 1531,
+      "mean": 326.8
+    }
+  },
+  "contamination": {
+    "n_train": 10000,
+    "n_eval_signatures": 350,
+    "hits": {
+      "image_bytes": 0,
+      "exact_gold": 0,
+      "near_duplicate": 0
+    },
+    "total_contaminated": 0,
+    "examples": {
+      "image_bytes": [],
+      "exact_gold": [],
+      "near_duplicate": []
+    },
+    "internal_duplicate_groups": 28,
+    "internal_duplicate_rows": 31,
+    "prefilter_dropped": {
+      "synthetic": {
+        "image_bytes": 0,
+        "exact_gold": 0,
+        "near_duplicate": 0
+      },
+      "real": {
+        "image_bytes": 2,
+        "exact_gold": 2,
+        "near_duplicate": 1
+      },
+      "total": 5
+    }
+  }
+}

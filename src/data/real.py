@@ -174,6 +174,25 @@ def rebuild_x_values(table: str, data: ChartData) -> ChartData:
     return data
 
 
+def load_excluded_ids(manifests: list[Path]) -> set[str]:
+    """Sample ids already used by another split.
+
+    The eval subset and the training subset are drawn from the same corpus, so
+    without this they overlap by construction — `contamination_report` would
+    catch it, but only after paying for the whole download and conversion.
+    Excluding up front is both cheaper and the correct default.
+    """
+    out: set[str] = set()
+    for m in manifests:
+        p = Path(m)
+        if not p.exists():
+            continue
+        for line in p.open(encoding="utf-8"):
+            if line.strip():
+                out.add(json.loads(line)["id"])
+    return out
+
+
 def build(
     out_dir: Path,
     n: int,
@@ -181,6 +200,8 @@ def build(
     seed: int,
     max_series: int,
     max_points: int,
+    exclude_ids: set[str] | None = None,
+    manifest_name: str = "real.jsonl",
 ) -> Path:
     """Select and convert `n` real charts.
 
@@ -216,10 +237,15 @@ def build(
     skipped = {"unparseable": 0, "too_many_series": 0, "too_dense": 0, "empty": 0}
     index = 0
 
-    for batch in pf.iter_batches(batch_size=1024, columns=["table"]):
+    exclude_ids = exclude_ids or set()
+    skipped["excluded"] = 0
+
+    for batch in pf.iter_batches(batch_size=1024, columns=["table", "sample_id"]):
         for row in batch.to_pylist():
             converted = to_chart_data(row["table"] or "")
-            if converted is None:
+            if f"real_{row['sample_id']}" in exclude_ids:
+                skipped["excluded"] += 1
+            elif converted is None:
                 skipped["unparseable"] += 1
             else:
                 gold, _ = converted
@@ -246,7 +272,7 @@ def build(
     out_dir = Path(out_dir)
     images = out_dir / "images"
     images.mkdir(parents=True, exist_ok=True)
-    manifest = out_dir / "real.jsonl"
+    manifest = out_dir / manifest_name
 
     written = 0
     index = 0
@@ -306,10 +332,21 @@ def main() -> None:
         help="skip charts denser than this; they are legitimate but their JSON "
         "runs past a practical generation budget",
     )
+    ap.add_argument(
+        "--exclude-manifest", action="append", default=[], type=Path,
+        help="repeatable; skip sample ids already present in these manifests, so "
+        "train and eval subsets drawn from the same corpus cannot overlap",
+    )
+    ap.add_argument("--manifest-name", default="real.jsonl")
     args = ap.parse_args()
 
+    excluded = load_excluded_ids(args.exclude_manifest)
+    if excluded:
+        print(f"excluding {len(excluded)} ids from {len(args.exclude_manifest)} manifest(s)")
+
     manifest = build(
-        args.out, args.n, args.shard, args.seed, args.max_series, args.max_points
+        args.out, args.n, args.shard, args.seed, args.max_series, args.max_points,
+        exclude_ids=excluded, manifest_name=args.manifest_name,
     )
 
     rows = [json.loads(x) for x in manifest.open(encoding="utf-8")]

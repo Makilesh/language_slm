@@ -145,7 +145,7 @@ stays open until it is run. Recorded here rather than left as a silent gap.
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | A. zero-shot, minimal | 150 | 94.7% | 94.7% | 78.0% | 51.4% | 14.0% | 71.6% | 9.6% | **24.7%** | 30.5% | 28% | 448px | no |
 | B. engineered prompt | 150 | 96.0% | 96.0% | 94.0% | 51.1% | 28.0% | 77.9% | 9.1% | **23.9%** | 30.4% | 30% | 448px | no |
-| C. engineered + constrained | 150 | 96.0% | 96.0% | 94.0% | 51.1% | 28.0% | 77.9% | 9.1% | **23.9%** | 30.4% | 30% | 448px | no |
+| C. engineered + constrained | 150 | 96.0% | 96.0% | 94.0% | 51.1% | 28.0% | 77.9% | 9.1% | **23.9%** | 30.4% | 30% | 448px | yes |
 
 ## A. zero-shot, minimal — by chart type
 
@@ -204,5 +204,5 @@ stays open until it is run. Recorded here rather than left as a silent gap.
 ## Run configs
 
 - **A. zero-shot, minimal** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `minimal` (v1.1), constrained=False, 448px, max_new_tokens=1024, median 17.9s/chart, mean 405 tokens
-- **B. engineered prompt** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `minimal` (v1.1), constrained=False, 448px, max_new_tokens=1024, median 15.6s/chart, mean 396 tokens
-- **C. engineered + constrained** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `minimal` (v1.1), constrained=False, 448px, max_new_tokens=1024, median 17.2s/chart, mean 396 tokens
+- **B. engineered prompt** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `engineered` (v1.1), constrained=False, 448px, max_new_tokens=1024, median 15.6s/chart, mean 396 tokens
+- **C. engineered + constrained** — `Qwen/Qwen3-VL-4B-Instruct`, no adapter, 4bit, prompt `engineered` (v1.1), constrained=True, 448px, max_new_tokens=1024, median 17.2s/chart, mean 396 tokens

@@ -273,7 +273,8 @@
     "long_edge": 448,
     "max_new_tokens": 1024,
     "attn": "sdpa",
-    "prompt_version": "1.1"
+    "prompt_version": "1.1",
+    "rescored": true
   },
   "timing": {
     "median_seconds": 17.24,

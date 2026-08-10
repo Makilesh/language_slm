@@ -16,7 +16,7 @@ and where the image-resolution knee sits.
 |---|---|
 | 0 — Environment delta | **done** — see [`setup/VRAM_BUDGET.md`](setup/VRAM_BUDGET.md) |
 | 1 — Evaluation harness | **done** — see [`results/baselines.md`](results/baselines.md) |
-| 2 — Training data | not started |
+| 2 — Training data | **done** — see [`results/dataset_stats.json`](results/dataset_stats.json) |
 | 3 — Fine-tuning + ablations | not started |
 | 4 — Error analysis | not started |
 | 5 — Quantization, deploy, release | not started |
@@ -30,12 +30,35 @@ Full table and caveats: [`results/baselines.md`](results/baselines.md).
 
 | arm | valid JSON | chart type | structural | **value@5%** | median APE |
 |---|---|---|---|---|---|
-| A. minimal prompt | 94.7% | 72.7% | 14.0% | **24.7%** | 28% |
-| B. engineered prompt | 96.0% | 88.7% | 28.0% | **23.9%** | 30% |
-| C. + constrained decoding | 96.0% | 88.7% | 28.0% | **23.9%** | 30% |
+| A. minimal prompt | 94.7% | 78.0% | 14.0% | **24.7%** | 28% |
+| B. engineered prompt | 96.0% | 94.0% | 28.0% | **23.9%** | 30% |
+| C. + constrained decoding | 96.0% | 94.0% | 28.0% | **23.9%** | 30% |
 
 Forgetting probe, base model: **ANLS 0.9237 / EM 0.86** on 200 DocVQA samples.
 That is the "before" number every headline run gets compared against.
+
+## Training corpus (Phase 2)
+
+10,000 samples, contamination-verified against both eval splits.
+Full stats: [`results/dataset_stats.json`](results/dataset_stats.json).
+Resolution reasoning: [`configs/RESOLUTION_POLICY.md`](configs/RESOLUTION_POLICY.md).
+
+| | |
+|---|---|
+| synthetic / real | 7,000 / 3,000 (70%) |
+| chart types | bar 2,202 · line 1,797 · stacked_bar 1,217 · scatter 897 · pie 887 · unannotated 3,000 |
+| series counts | 1: 4,876 · 2: 2,235 · 3: 2,327 · 4: 378 · 5: 184 |
+| degraded (JPEG, blur, rotation, screenshot border) | 1,382 (20% of synthetic) |
+| sequence length @448px | p50 601 · p99 1,280 · max 1,928 → `max_seq_len 2048` |
+
+The image is only ~19% of the median sequence; the target JSON dominates the
+budget, which is why compact separators are a real saving rather than a
+micro-optimisation.
+
+**Contamination is filtered before mixing, and the build aborts if anything
+survives.** Id-based exclusion alone was not enough — the real corpus stores
+some charts twice under consecutive sample ids, so five reached the training
+pool with different ids and identical content. Only the content hash caught it.
 
 Three things the baselines already settled:
 

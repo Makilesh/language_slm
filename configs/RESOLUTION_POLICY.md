@@ -55,7 +55,7 @@ Two consequences worth planning around:
 - A model trained at 448 and evaluated at 768 is a train/test resolution
   mismatch. It may help (more detail) or hurt (unfamiliar token counts). It is
   a measurable question and belongs in B2, not an assumption.
-  
+
 - The demo can serve at 768 or 1280 for free. Whether that is *better* is
   exactly what B2 answers.
 
@@ -93,6 +93,8 @@ Raise resolution if any of these change:
 1. The ~6 GiB backward overhead in [`results/phase0_findings.md`](../results/phase0_findings.md) §4
    turns out to be NF4 dequantization with a fix — that is the single biggest
    lever available and would put 768 in range.
+
 2. Training moves to the Kaggle 2×T4 (fp16), where the memory budget differs.
+
 3. Error analysis (Phase 4) attributes a large share of failures to unreadable
    labels rather than misread values.

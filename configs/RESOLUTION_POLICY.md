@@ -55,6 +55,7 @@ Two consequences worth planning around:
 - A model trained at 448 and evaluated at 768 is a train/test resolution
   mismatch. It may help (more detail) or hurt (unfamiliar token counts). It is
   a measurable question and belongs in B2, not an assumption.
+  
 - The demo can serve at 768 or 1280 for free. Whether that is *better* is
   exactly what B2 answers.
 

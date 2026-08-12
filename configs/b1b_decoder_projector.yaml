@@ -1,0 +1,45 @@
+# B1(b) — decoder + vision-language projector (main merger and deepstack mergers).
+#
+# Tests whether letting the projection adapt beats freezing it. This is the arm
+# most likely to help without destabilising visual features: the projector is
+# small and sits exactly at the modality boundary, so it can re-aim visual
+# features at the task without rewriting them.
+#
+# Every other field is identical to configs/b1a_decoder.yaml — one variable per
+# experiment (standing rule 5).
+
+model: Qwen/Qwen3-VL-4B-Instruct
+dataset: data/train/train.jsonl
+output_dir: outputs/b1b_decoder_projector
+run_name: b1b_decoder_projector
+
+train_mode: decoder_projector
+
+lora_r: 32
+lora_alpha: 64
+lora_dropout: 0.05
+
+lr: 1.0e-4
+epochs: 2.0
+batch_size: 1
+grad_accum: 16
+warmup_ratio: 0.03
+scheduler: cosine
+max_grad_norm: 1.0
+
+# configs/RESOLUTION_POLICY.md: 448px is the only resolution whose backward
+# pass fits in 11.94 GiB. max_seq_len 2048 clears the measured max of 1,928.
+long_edge: 448
+max_seq_len: 2048
+prompt_style: engineered
+
+# Frozen ViT kept in bf16: ~0.44B params, so bf16 costs well under a gigabyte
+# over NF4, and there is no reason to push quantization error through features
+# that are never trained.
+quantize_vision: false
+attn: sdpa
+
+seed: 42
+logging_steps: 10
+save_steps: 500
+save_total_limit: 2

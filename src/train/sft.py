@@ -142,17 +142,39 @@ def load_config(path: Path, overrides: list[str]) -> Config:
         key, _, val = item.partition("=")
         if key not in known:
             raise SystemExit(f"unknown override: {key}")
-        current = getattr(cfg, key)
-        if isinstance(current, bool):
-            parsed: Any = val.lower() in ("1", "true", "yes")
-        elif isinstance(current, int) and not isinstance(current, bool):
-            parsed = int(val)
-        elif isinstance(current, float):
-            parsed = float(val)
-        else:
-            parsed = val
-        setattr(cfg, key, parsed)
+        setattr(cfg, key, _coerce(val, getattr(cfg, key)))
     return cfg
+
+
+def _coerce(val: str, current: Any) -> Any:
+    """Parse a CLI override to match the field's type.
+
+    Fields whose default is None (`limit`, `max_steps` overrides) carry no type
+    information at runtime, so the value is inferred from its own text. Without
+    this, `--set limit=64` silently assigns the *string* "64" and fails later
+    with an unhelpful slice error.
+    """
+    if isinstance(current, bool):
+        return val.lower() in ("1", "true", "yes")
+    if isinstance(current, int):
+        return int(val)
+    if isinstance(current, float):
+        return float(val)
+    if isinstance(current, str):
+        return val
+
+    if val.lower() in ("none", "null", ""):
+        return None
+    if val.lower() in ("true", "false"):
+        return val.lower() == "true"
+    try:
+        return int(val)
+    except ValueError:
+        pass
+    try:
+        return float(val)
+    except ValueError:
+        return val
 
 
 def set_seed(seed: int) -> None:
@@ -418,6 +440,16 @@ def main() -> None:
 
     from transformers import Trainer, TrainingArguments
 
+    # transformers v5 deprecates warmup_ratio in favour of warmup_steps. The
+    # brief specifies a ratio, so convert rather than change the recipe, and
+    # log both so the config and the run agree.
+    effective_batch = cfg.batch_size * cfg.grad_accum
+    steps_per_epoch = max(1, -(-len(dataset) // effective_batch))
+    total_steps = cfg.max_steps if cfg.max_steps > 0 else int(steps_per_epoch * cfg.epochs)
+    warmup_steps = max(1, round(total_steps * cfg.warmup_ratio))
+    print(f"  schedule         {total_steps} steps "
+          f"({steps_per_epoch}/epoch), warmup {warmup_steps}")
+
     targs = TrainingArguments(
         output_dir=str(out),
         run_name=cfg.run_name,
@@ -427,7 +459,7 @@ def main() -> None:
         max_steps=cfg.max_steps,
         learning_rate=cfg.lr,
         lr_scheduler_type=cfg.scheduler,
-        warmup_ratio=cfg.warmup_ratio,
+        warmup_steps=warmup_steps,
         weight_decay=cfg.weight_decay,
         max_grad_norm=cfg.max_grad_norm,
         logging_steps=cfg.logging_steps,
@@ -441,7 +473,8 @@ def main() -> None:
         dataloader_num_workers=0,      # image decode is not the bottleneck here
         report_to=[],
         seed=cfg.seed,
-        save_safetensors=True,
+        # `save_safetensors` was removed in transformers v5 -- safetensors is
+        # now the only serialisation path, so the flag is implicit.
     )
 
     trainer = Trainer(
